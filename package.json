@@ -1,0 +1,8 @@
+{
+  "name": "node-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/lucasbernardol/node-api.git",
+  "author": "José Lucas <jose.lukass03@gmail.com>",
+  "license": "MIT"
+}
