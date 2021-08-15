@@ -5,6 +5,14 @@
   "repository": "https://github.com/lucasbernardol/node-api.git",
   "author": "José Lucas <jose.lukass03@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
@@ -15,10 +23,5 @@
     "prettier": "^2.3.2",
     "ts-node-dev": "^1.1.8",
     "typescript": "^4.3.5"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "morgan": "^1.10.0"
   }
 }
