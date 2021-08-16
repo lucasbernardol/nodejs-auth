@@ -76,6 +76,17 @@ class UsersServices {
 
     return { id };
   }
+
+  /**
+   * @public
+   */
+  async find(id: string) {
+    const usersRepositories = getCustomRepository(UsersRepositories);
+
+    const account = await usersRepositories.findOne(id);
+
+    return account ? classToPlain(account) : null;
+  }
 }
 
 export { UsersServices };

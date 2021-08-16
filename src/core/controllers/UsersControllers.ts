@@ -23,6 +23,20 @@ class UsersControllers {
     }
   }
 
+  async findId(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { id } = request.params;
+
+      const services = new UsersServices();
+
+      const account = await services.find(id);
+
+      return response.json(account);
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   async create(request: Request, response: Response, next: NextFunction) {
     try {
       const { name, username, email, password } = request.body;
