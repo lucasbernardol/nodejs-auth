@@ -15,7 +15,8 @@
     "morgan": "^1.10.0",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.37"
+    "typeorm": "^0.2.37",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
@@ -24,6 +25,7 @@
     "@types/express": "^4.17.13",
     "@types/morgan": "^1.9.3",
     "@types/node": "^16.6.1",
+    "@types/uuid": "^8.3.1",
     "husky": "^7.0.1",
     "prettier": "^2.3.2",
     "ts-node-dev": "^1.1.8",
