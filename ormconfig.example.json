@@ -11,6 +11,6 @@
   "entities": ["src/core/entities/*.ts"],
 
   "cli": {
-    "migrationsDir": "src/core/entities/*.ts"
+    "migrationsDir": "src/core/database/migrations"
   }
 }
