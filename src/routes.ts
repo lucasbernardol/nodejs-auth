@@ -19,4 +19,6 @@ const usersControllers = new UsersControllers();
 
 routes.get('/users', usersControllers.all);
 
+routes.post('/users', usersControllers.create);
+
 export { routes };
