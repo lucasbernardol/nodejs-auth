@@ -18,6 +18,7 @@ routes.get('/', mainController.main);
 const usersControllers = new UsersControllers();
 
 routes.get('/users', usersControllers.all);
+routes.get('/users/:id', usersControllers.findId);
 
 routes.post('/users', usersControllers.create);
 
