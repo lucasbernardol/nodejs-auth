@@ -1,3 +1,5 @@
+import { BadRequest } from 'http-errors';
+import bcrypt from 'bcryptjs';
 import { classToPlain } from 'class-transformer';
 import { getCustomRepository } from 'typeorm';
 
@@ -9,10 +11,22 @@ export interface Pagination {
   page: number;
 }
 
+export interface CreateUserContext {
+  name: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
 /**
  * @class UsersServices
  */
 class UsersServices {
+  /**
+   * Bcrypt salt
+   */
+  private salt: number = 8;
+
   async list(options: Pagination) {
     const { limit, page } = options;
 
@@ -30,6 +44,37 @@ class UsersServices {
     const accounts = accountResults.map((account) => classToPlain(account));
 
     return { accounts, meta: { pagination, range } };
+  }
+
+  async create(context: CreateUserContext) {
+    const { name, username, email, password: plainText } = context;
+
+    const usersRepositories = getCustomRepository(UsersRepositories);
+
+    /**
+     * - where TypeORM
+     */
+    const where = [{ username }, { email }];
+
+    const account = await usersRepositories.findOne({ where });
+
+    if (account) throw new BadRequest();
+
+    /**
+     * - hash
+     */
+    const password = await bcrypt.hash(plainText, this.salt);
+
+    const accountInstance = usersRepositories.create({
+      name,
+      email,
+      username,
+      password,
+    });
+
+    const { id } = await usersRepositories.save(accountInstance);
+
+    return { id };
   }
 }
 

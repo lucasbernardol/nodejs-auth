@@ -22,6 +22,20 @@ class UsersControllers {
       return next(error);
     }
   }
+
+  async create(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { name, username, email, password } = request.body;
+
+      const services = new UsersServices();
+
+      const { id } = await services.create({ name, username, email, password });
+
+      return response.json({ id });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export { UsersControllers };
