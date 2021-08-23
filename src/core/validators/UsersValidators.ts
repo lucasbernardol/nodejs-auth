@@ -12,6 +12,12 @@ const account = {
       password: Joi.string().min(6).max(32).trim().lowercase().required(),
       repeat: Joi.ref('password'),
     }),
+
+    signInSchema: Joi.object({
+      email: Joi.string().email().trim().lowercase().min(8).required(),
+      password: Joi.string().min(6).max(32).trim().lowercase().required(),
+      repeat: Joi.ref('password'),
+    }),
   },
 };
 
