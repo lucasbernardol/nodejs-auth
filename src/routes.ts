@@ -7,7 +7,7 @@ import { UsersControllers } from './core/controllers/UsersControllers';
 import { account } from './core/validators/UsersValidators';
 import { SessionsControllers } from './core/controllers/SessionsControllers';
 
-const { signUpSchema } = account.body;
+const { signUpSchema, signInSchema } = account.body;
 
 const routes = Router();
 
@@ -37,6 +37,10 @@ routes.post(
  */
 const sessionsController = new SessionsControllers();
 
-routes.post('/sessions', sessionsController.signIn);
+routes.post(
+  '/sessions',
+  celebrate({ body: signInSchema }),
+  sessionsController.signIn
+);
 
 export { routes };
