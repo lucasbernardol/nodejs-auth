@@ -18,6 +18,11 @@ export interface CreateUserContext {
   password: string;
 }
 
+export interface DeleteContext {
+  id: string;
+  password: string;
+}
+
 /**
  * @class UsersServices
  */
@@ -86,6 +91,22 @@ class UsersServices {
     const account = await usersRepositories.findOne(id);
 
     return account ? classToPlain(account) : null;
+  }
+
+  async delete(context: DeleteContext) {
+    const { id, password: plain } = context;
+
+    const usersRepositories = getCustomRepository(UsersRepositories);
+
+    const account = await usersRepositories.findOne(id);
+
+    const is = account ? await bcrypt.compare(plain, account.password) : false;
+
+    if (!is) throw new BadRequest();
+
+    const { affected: deleted } = await usersRepositories.delete(id);
+
+    return { id, deleted };
   }
 }
 
