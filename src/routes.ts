@@ -17,7 +17,7 @@ const authentication = authenticate({
   avaliableHeaders: ['authorization'],
 });
 
-const { signUpSchema, signInSchema, deleteSchema } = account.body;
+const { signUpSchema, signInSchema, deleteSchema, changeSchema } = account.body;
 
 const routes = Router();
 
@@ -67,6 +67,11 @@ routes.post(
  */
 const alterControllers = new AlterControllers();
 
-routes.post('/alter/change', authentication, alterControllers.change);
+routes.post(
+  '/alter/change',
+  authentication,
+  celebrate({ body: changeSchema }),
+  alterControllers.change
+);
 
 export { routes };
