@@ -1,11 +1,20 @@
 import { Router } from 'express';
 import { celebrate } from 'celebrate';
 
+import { jwtConfig } from './config/jsonwebtoken';
+
 import { MainController } from './core/controllers/MainController';
 import { UsersControllers } from './core/controllers/UsersControllers';
 
 import { account } from './core/validators/UsersValidators';
 import { SessionsControllers } from './core/controllers/SessionsControllers';
+
+import { authenticate } from './core/middlewares/ensureAuthentication';
+
+const authentication = authenticate({
+  secret: jwtConfig.secret,
+  avaliableHeaders: ['authorization'],
+});
 
 const { signUpSchema, signInSchema } = account.body;
 
@@ -23,8 +32,8 @@ routes.get('/', mainController.main);
  */
 const usersControllers = new UsersControllers();
 
-routes.get('/users', usersControllers.all);
-routes.get('/users/:id', usersControllers.findId);
+routes.get('/users', authentication, usersControllers.all);
+routes.get('/users/:id', authentication, usersControllers.findId);
 
 routes.post(
   '/users',
