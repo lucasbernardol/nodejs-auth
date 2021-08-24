@@ -28,7 +28,7 @@ export interface DeleteContext {
  */
 class UsersServices {
   /**
-   * Bcrypt salt
+   * - bcrypt salt
    */
   private salt: number = 8;
 
@@ -41,14 +41,18 @@ class UsersServices {
 
     const { offSet, range, pagination } = paginate({ total, page, limit });
 
-    const accountResults = await usersRepositories.find({
+    const accounts = await usersRepositories.find({
       take: pagination.limit,
       skip: offSet,
     });
 
-    const accounts = accountResults.map((account) => classToPlain(account));
-
-    return { accounts, meta: { pagination, range } };
+    return {
+      users: accounts.map((account) => classToPlain(account)),
+      meta: {
+        pagination,
+        range,
+      },
+    };
   }
 
   async create(context: CreateUserContext) {

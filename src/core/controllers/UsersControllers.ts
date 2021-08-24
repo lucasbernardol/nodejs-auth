@@ -12,12 +12,12 @@ class UsersControllers {
 
       const services = new UsersServices();
 
-      const { accounts, meta } = await services.list({
+      const { users, meta } = await services.list({
         page: Number(page) || 1,
         limit: Number(limit) || 10,
       });
 
-      return response.json({ meta, accounts });
+      return response.json({ users, meta });
     } catch (error) {
       return next(error);
     }
