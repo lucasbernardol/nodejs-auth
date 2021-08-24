@@ -4,10 +4,11 @@ import { celebrate } from 'celebrate';
 import { jwtConfig } from './config/jsonwebtoken';
 
 import { MainController } from './core/controllers/MainController';
+import { SessionsControllers } from './core/controllers/SessionsControllers';
 import { UsersControllers } from './core/controllers/UsersControllers';
+import { AlterControllers } from './core/controllers/AlterControllers';
 
 import { account } from './core/validators/UsersValidators';
-import { SessionsControllers } from './core/controllers/SessionsControllers';
 
 import { authenticate } from './core/middlewares/ensureAuthentication';
 
@@ -60,5 +61,12 @@ routes.post(
   celebrate({ body: signInSchema }),
   sessionsController.signIn
 );
+
+/**
+ * Path: '/alter'
+ */
+const alterControllers = new AlterControllers();
+
+routes.post('/alter/change', authentication, alterControllers.change);
 
 export { routes };
