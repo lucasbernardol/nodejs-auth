@@ -33,6 +33,14 @@ class User {
   @Column()
   password: string;
 
+  @Exclude()
+  @Column({ name: 'resetPasswordToken' })
+  token: string;
+
+  @Exclude()
+  @Column({ name: 'resetPasswordExpires' })
+  expires: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
