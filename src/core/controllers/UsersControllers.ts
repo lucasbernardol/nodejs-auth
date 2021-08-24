@@ -50,6 +50,20 @@ class UsersControllers {
       return next(error);
     }
   }
+
+  async me(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { id } = request.user;
+
+      const services = new UsersServices();
+
+      const account = await services.find(id);
+
+      return response.json(account);
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export { UsersControllers };
