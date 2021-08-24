@@ -23,6 +23,13 @@ const account = {
       password: Joi.string().min(6).max(32).trim().lowercase().required(),
       repeat: Joi.string().valid(Joi.ref('password')),
     }),
+
+    changeSchema: Joi.object({
+      oldPassword: Joi.string().min(6).max(32).trim().lowercase().required(),
+      oldRepeat: Joi.string().valid(Joi.ref('oldPassword')),
+      password: Joi.string().min(6).max(32).trim().lowercase().required(),
+      repeat: Joi.string().valid(Joi.ref('password')),
+    }),
   },
 };
 
