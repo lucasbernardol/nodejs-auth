@@ -35,6 +35,8 @@ const usersControllers = new UsersControllers();
 routes.get('/users', authentication, usersControllers.all);
 routes.get('/users/:id', authentication, usersControllers.findId);
 
+routes.get('/me', authentication, usersControllers.me);
+
 routes.post(
   '/users',
   celebrate({ body: signUpSchema }),
