@@ -64,6 +64,22 @@ class UsersControllers {
       return next(error);
     }
   }
+
+  async remove(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { id } = request.user;
+
+      const { password } = request.body;
+
+      const services = new UsersServices();
+
+      const { deleted } = await services.delete({ id, password });
+
+      return response.json({ id, deleted });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export { UsersControllers };
