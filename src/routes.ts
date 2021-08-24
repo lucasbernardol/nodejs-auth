@@ -16,7 +16,7 @@ const authentication = authenticate({
   avaliableHeaders: ['authorization'],
 });
 
-const { signUpSchema, signInSchema } = account.body;
+const { signUpSchema, signInSchema, deleteSchema } = account.body;
 
 const routes = Router();
 
@@ -43,7 +43,12 @@ routes.post(
   usersControllers.create
 );
 
-routes.delete('/users', authentication, usersControllers.remove);
+routes.delete(
+  '/users',
+  authentication,
+  celebrate({ body: deleteSchema }),
+  usersControllers.remove
+);
 
 /**
  * Path: '/sessions'
