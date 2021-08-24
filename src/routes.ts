@@ -43,6 +43,8 @@ routes.post(
   usersControllers.create
 );
 
+routes.delete('/users', authentication, usersControllers.remove);
+
 /**
  * Path: '/sessions'
  */
