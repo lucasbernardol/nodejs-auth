@@ -50,6 +50,20 @@ class AlterControllers {
       return next(error);
     }
   }
+
+  async reset(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { password, token } = request.body;
+
+      const services = new AlterServices();
+
+      const { updated } = await services.reset({ token, password });
+
+      return response.json({ updated });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export { AlterControllers };

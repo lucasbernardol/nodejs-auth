@@ -15,6 +15,11 @@ export interface UpdateContext {
   password: string;
 }
 
+export interface ResetContext {
+  token: string;
+  password: string;
+}
+
 /**
  * @class
  */
@@ -52,6 +57,37 @@ class AlterServices {
       token,
       expires,
       updated: affected,
+    };
+  }
+
+  async reset(context: ResetContext) {
+    const { token, password: plain } = context;
+
+    const usersRepositories = getCustomRepository(UsersRepositories);
+
+    const account = await usersRepositories.findOne({ token });
+
+    if (!account) throw new BadRequest();
+
+    const { expires, id } = account;
+
+    const isExpiredToken = dayjs().isAfter(expires, 'milliseconds');
+
+    if (isExpiredToken) throw new BadRequest('Token expired!');
+
+    /**
+     * - hash, password
+     */
+    const password = await hash(plain, this.salt);
+
+    const { affected: updated } = await usersRepositories.update(id, {
+      token: null,
+      expires: null,
+      password,
+    });
+
+    return {
+      updated,
     };
   }
 
