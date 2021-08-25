@@ -17,8 +17,14 @@ const authentication = authenticate({
   avaliableHeaders: ['authorization'],
 });
 
-const { signUpSchema, signInSchema, deleteSchema, changeSchema, forgotShema } =
-  account.body;
+const {
+  signUpSchema,
+  signInSchema,
+  deleteSchema,
+  changeSchema,
+  forgotShema,
+  resetSchema,
+} = account.body;
 
 const routes = Router();
 
@@ -81,6 +87,10 @@ routes.post(
   alterControllers.forgot
 );
 
-routes.post('/alter/reset', alterControllers.reset);
+routes.post(
+  '/alter/reset',
+  celebrate({ body: resetSchema }),
+  alterControllers.reset
+);
 
 export { routes };
