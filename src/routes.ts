@@ -76,4 +76,6 @@ routes.post(
 
 routes.post('/alter/forgot', alterControllers.forgot);
 
+routes.post('/alter/reset', alterControllers.reset);
+
 export { routes };
