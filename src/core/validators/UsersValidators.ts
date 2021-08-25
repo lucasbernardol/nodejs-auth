@@ -34,6 +34,12 @@ const account = {
     forgotShema: Joi.object({
       email: Joi.string().email().trim().lowercase().min(12).required(),
     }),
+
+    resetSchema: Joi.object({
+      password: Joi.string().min(6).max(32).trim().lowercase().required(),
+      repeat: Joi.string().valid(Joi.ref('password')),
+      token: Joi.string().trim().lowercase().required(),
+    }),
   },
 };
 
