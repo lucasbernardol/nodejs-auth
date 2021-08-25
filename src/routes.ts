@@ -74,4 +74,6 @@ routes.post(
   alterControllers.change
 );
 
+routes.post('/alter/forgot', alterControllers.forgot);
+
 export { routes };
