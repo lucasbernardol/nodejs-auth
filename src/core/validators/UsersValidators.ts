@@ -30,6 +30,10 @@ const account = {
       password: Joi.string().min(6).max(32).trim().lowercase().required(),
       repeat: Joi.string().valid(Joi.ref('password')),
     }),
+
+    forgotShema: Joi.object({
+      email: Joi.string().email().trim().lowercase().min(12).required(),
+    }),
   },
 };
 
