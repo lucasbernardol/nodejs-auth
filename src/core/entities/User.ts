@@ -1,3 +1,5 @@
+import { Exclude } from 'class-transformer';
+
 import {
   Entity,
   PrimaryColumn,
@@ -6,19 +8,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Exclude } from 'class-transformer';
 import { v4 as uuid } from 'uuid';
 
 @Entity({ name: 'users' })
 class User {
   @PrimaryColumn()
   id: string;
-
-  public constructor() {
-    if (!this.id) {
-      this.id = uuid();
-    }
-  }
 
   @Column()
   name: string;
@@ -33,12 +28,18 @@ class User {
   @Column()
   password: string;
 
+  /**
+   * -reset passowrd token.
+   */
   @Exclude()
-  @Column({ name: 'resetPasswordToken' })
+  @Column({ name: 'reset_token' })
   token: string;
 
+  /**
+   * - reset token expires.
+   */
   @Exclude()
-  @Column({ name: 'resetPasswordExpires' })
+  @Column({ name: 'reset_token_expires' })
   expires: Date;
 
   @CreateDateColumn()
@@ -46,6 +47,12 @@ class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  constructor() {
+    if (!this.id) {
+      this.id = uuid();
+    }
+  }
 }
 
 export { User };
