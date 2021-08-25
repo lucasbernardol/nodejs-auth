@@ -39,7 +39,7 @@ class User {
 
   @Exclude()
   @Column({ name: 'resetPasswordExpires' })
-  expires: string;
+  expires: Date;
 
   @CreateDateColumn()
   createdAt: Date;
