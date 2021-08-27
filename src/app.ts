@@ -5,6 +5,7 @@ import hpp from 'hpp';
 
 import { routes } from './routes';
 
+import { celebrateValidation } from './core/middlewares/celebrateValidation';
 import { NotFound, HttpHandler } from './core/middlewares/handlers';
 
 const app = express();
@@ -20,10 +21,13 @@ app.use(morgan('dev'));
 app.use(routes);
 
 /**
- * handles
- * - http errors
+ * Validations
  * - Not found
+ * - Validation errors (celebrate, Joi)
+ * - Http (errors)
  */
+app.use(celebrateValidation({ setDetails: false }));
+
 app.use(NotFound(), HttpHandler());
 
 export { app };
