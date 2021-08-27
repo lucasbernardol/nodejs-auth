@@ -5,7 +5,7 @@ import hpp from 'hpp';
 
 import { routes } from './routes';
 
-import { httpHandler } from './core/middlewares/httpHandler';
+import { NotFound, HttpHandler } from './core/middlewares/handlers';
 
 const app = express();
 
@@ -20,8 +20,10 @@ app.use(morgan('dev'));
 app.use(routes);
 
 /**
- * - handlers
+ * handles
+ * - http errors
+ * - Not found
  */
-app.use(httpHandler());
+app.use(NotFound(), HttpHandler());
 
 export { app };
