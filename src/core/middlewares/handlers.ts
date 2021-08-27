@@ -1,40 +1,44 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { NotFound, HttpError, isHttpError } from 'http-errors';
+import { NotFound as HttpNotFound, HttpError, isHttpError } from 'http-errors';
 
 /**
  * @function
  */
-function NotFoundHandler() {
+export function NotFound() {
   return (request: Request, response: Response, next: NextFunction) => {
-    return next(new NotFound('Endpoint not found, are you lost?'));
+    /**
+     * - call next handler
+     */
+    return next(new HttpNotFound('Endpoint not found, are you lost?'));
   };
 }
 
-function HttpHandler() {
+/**
+ * @function
+ */
+export function HttpHandler() {
   return (error: HttpError, _: any, response: Response, next: NextFunction) => {
     const isHttpException = isHttpError(error);
 
-    if (isHttpException) {
-      const { status, message, name } = error;
+    if (!isHttpException) {
+      return response.status(500).json({ message: 'Internal server Error!' });
+    }
 
-      /**
-       * - merged error object
-       */
-      const merged = {
+    const { status, message, name } = error;
+
+    /**
+     * - merged error object
+     */
+    const merged = {
+      error: {
         name,
         message,
         status,
         ...error,
-      };
+      },
+    };
 
-      return response.status(status).json({ error: merged });
-    }
-
-    return response.status(500).json({
-      message: 'Internal server Error!',
-    });
+    return response.status(status).json(merged);
   };
 }
-
-export { NotFoundHandler as NotFound, HttpHandler };
