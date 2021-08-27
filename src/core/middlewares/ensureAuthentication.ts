@@ -106,7 +106,8 @@ export function authenticate(options: Options) {
       }
     }
 
-    const hasHeadersOrEmptyToken = !authorizationToken && !!request.headers;
+    const hasHeadersOrEmptyToken =
+      !authorizationToken && Boolean(request.headers);
 
     if (hasHeadersOrEmptyToken) {
       const isArray =
@@ -123,7 +124,7 @@ export function authenticate(options: Options) {
 
         if (authorizationHeaderLength) {
           return next(
-            new BadRequest('Token Malformed, Header: Bearer [token]')
+            new BadRequest('Token malformed, Header: Bearer [token]')
           );
         }
 
@@ -133,14 +134,14 @@ export function authenticate(options: Options) {
 
         if (!isBearer) {
           return next(
-            new Unauthorized('Token, Malformed, Header: Bearer [token]')
+            new Unauthorized('Token malformed, Header: Bearer [token]')
           );
         }
 
         authorizationToken = token;
       } else {
         if (credentialsRequired) {
-          return next(new Unauthorized('Token not provided'));
+          return next(new Unauthorized('Authorization token not provided!'));
         }
 
         return next();
@@ -184,7 +185,9 @@ export function authenticate(options: Options) {
       if (isTokenExpiredError) {
         const { expiredAt } = error;
 
-        const message = 'Token expired at:' + expiredAt;
+        const expires = new Date(expiredAt).toLocaleString();
+
+        const message = `Token expired at: ${expires}`;
 
         return next(httpError(401, message, { expiredAt }));
       }
@@ -194,10 +197,10 @@ export function authenticate(options: Options) {
       if (isTokenNotBeforeError) {
         const { date } = error;
 
-        return next(httpError(401, 'Token not active', { date }));
+        return next(httpError(401, 'Token not active!', { date }));
       }
 
-      return next(new Unauthorized('Token invalid'));
+      return next(new Unauthorized('Invalid authorization token!'));
     }
 
     /**
