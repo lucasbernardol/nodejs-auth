@@ -12,9 +12,9 @@ import { account } from './core/validators/UsersValidators';
 
 import { authenticate } from './core/middlewares/ensureAuthentication';
 
-const authentication = authenticate({
+const secure = authenticate({
   secret: jwtConfig.secret,
-  avaliableHeaders: ['authorization'],
+  headers: ['authorization'],
 });
 
 const {
@@ -29,21 +29,31 @@ const {
 const routes = Router();
 
 /**
- * Path: '/'
+ * Path: "/"
  */
 const mainController = new MainController();
 
 routes.get('/', mainController.main);
 
 /**
- * Path: '/users'
+ * Path: "/sessions"
+ */
+const sessionController = new SessionsControllers();
+
+routes.post(
+  '/sessions',
+  celebrate({ body: signInSchema }),
+  sessionController.signIn
+);
+
+/**
+ * Path: "/users"
  */
 const usersControllers = new UsersControllers();
 
-routes.get('/users', authentication, usersControllers.all);
-routes.get('/users/:id', authentication, usersControllers.findId);
-
-routes.get('/me', authentication, usersControllers.me);
+routes.get('/users', secure, usersControllers.all);
+routes.get('/users/me', secure, usersControllers.me);
+routes.get('/users/:id', secure, usersControllers.findId);
 
 routes.post(
   '/users',
@@ -53,20 +63,9 @@ routes.post(
 
 routes.delete(
   '/users',
-  authentication,
+  secure,
   celebrate({ body: deleteSchema }),
   usersControllers.remove
-);
-
-/**
- * Path: '/sessions'
- */
-const sessionsController = new SessionsControllers();
-
-routes.post(
-  '/sessions',
-  celebrate({ body: signInSchema }),
-  sessionsController.signIn
 );
 
 /**
@@ -76,7 +75,7 @@ const alterControllers = new AlterControllers();
 
 routes.post(
   '/alter/change',
-  authentication,
+  secure,
   celebrate({ body: changeSchema }),
   alterControllers.change
 );
