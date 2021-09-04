@@ -1,9 +1,9 @@
 import { Context, ValidationErrorItem } from 'joi';
 import { CelebrateError, isCelebrateError } from 'celebrate';
 
-import { Request, Response, NextFunction } from 'express';
+import { Response, NextFunction } from 'express';
 
-export interface CelebrateOptions {
+export interface Options {
   /**
    * @default 400
    */
@@ -21,10 +21,9 @@ export interface Details {
 }
 
 /**
- * A custom `celebrate` validation middleware.
- * @function
+ * - A custom `celebrate` validation middleware `Joi`.
  */
-export function celebrateValidation(options: CelebrateOptions = {}) {
+export function celebrateValidation(options: Options = {}) {
   const { status = 400, setDetails } = options;
 
   function validationNormalized(details: ValidationErrorItem[]): Details[] {
@@ -39,39 +38,30 @@ export function celebrateValidation(options: CelebrateOptions = {}) {
     }));
   }
 
-  return (
-    error: CelebrateError,
-    _: Request,
-    response: Response,
-    next: NextFunction
-  ) => {
+  return (error: CelebrateError, _: any, res: Response, next: NextFunction) => {
+    let exception = {};
+
     const isCelebrateException = isCelebrateError(error);
 
-    if (!isCelebrateException) return next(error);
+    if (!isCelebrateException) {
+      /**
+       * - next handler
+       */
+      return next(error);
+    }
 
-    const exception = {};
-
-    for (let [key, celebrateError] of error.details.entries()) {
+    for (let [prefix, celebrateError] of error.details.entries()) {
       const { name, message, details: celebrateDetails } = celebrateError;
 
       const details = setDetails
         ? validationNormalized(celebrateDetails)
         : null;
 
-      const keys = celebrateError.details.map(({ path }) => {
-        return path.join();
-      });
+      const keys = celebrateError.details.map(({ path }) => path.join());
 
-      exception[key] = { name, message, keys, details };
+      exception[prefix] = { name, message, keys, details };
     }
 
-    /**
-     * - merged
-     */
-    const merged = {
-      error: exception,
-    };
-
-    return response.status(status).json(merged);
+    return res.status(status).json({ error: exception });
   };
 }
