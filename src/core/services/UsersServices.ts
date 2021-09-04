@@ -1,10 +1,10 @@
-import { BadRequest } from 'http-errors';
 import bcrypt from 'bcryptjs';
-import { classToPlain } from 'class-transformer';
+import { paginate } from 'paging-util';
+import { BadRequest } from 'http-errors';
 import { getCustomRepository } from 'typeorm';
+import { classToPlain } from 'class-transformer';
 
 import { UsersRepositories } from '../repositories/UsersRepositories';
-import { paginate } from '../utilities/paginate';
 
 export interface Pagination {
   limit: number;
@@ -37,21 +37,25 @@ class UsersServices {
 
     const usersRepositories = getCustomRepository(UsersRepositories);
 
+    /**
+     * - total items
+     */
     const total = await usersRepositories.count();
 
-    const { offSet, range, pagination } = paginate({ total, page, limit });
+    const { offSet, pagination, range } = paginate({ total, page, limit });
 
-    const accounts = await usersRepositories.find({
-      take: pagination.limit,
+    const results = await usersRepositories.find({
       skip: offSet,
+      take: pagination.limit,
     });
 
     return {
-      users: accounts.map((account) => classToPlain(account)),
       meta: {
+        offSet,
         pagination,
         range,
       },
+      users: results.map((user) => classToPlain(user)),
     };
   }
 
@@ -61,17 +65,14 @@ class UsersServices {
     const usersRepositories = getCustomRepository(UsersRepositories);
 
     /**
-     * - where TypeORM
+     * - where
      */
     const where = [{ username }, { email }];
 
     const account = await usersRepositories.findOne({ where });
 
-    if (account) throw new BadRequest();
+    if (account) throw new BadRequest('This email address already exists');
 
-    /**
-     * - hash
-     */
     const password = await bcrypt.hash(plainText, this.salt);
 
     const accountInstance = usersRepositories.create({
@@ -83,7 +84,9 @@ class UsersServices {
 
     const { id } = await usersRepositories.save(accountInstance);
 
-    return { id };
+    return {
+      id,
+    };
   }
 
   /**
@@ -97,20 +100,28 @@ class UsersServices {
     return account ? classToPlain(account) : null;
   }
 
+  /**
+   * @public
+   */
   async delete(context: DeleteContext) {
-    const { id, password: plain } = context;
+    const { id, password } = context;
 
     const usersRepositories = getCustomRepository(UsersRepositories);
 
     const account = await usersRepositories.findOne(id);
 
-    const is = account ? await bcrypt.compare(plain, account.password) : false;
+    const isMatch = account
+      ? await bcrypt.compare(password, account.password)
+      : false;
 
-    if (!is) throw new BadRequest();
+    if (!isMatch) throw new BadRequest('Invalid email or password');
 
     const { affected: deleted } = await usersRepositories.delete(id);
 
-    return { id, deleted };
+    return {
+      id,
+      deleted,
+    };
   }
 }
 

@@ -1,14 +1,13 @@
 import dayjs from 'dayjs';
-import { getCustomRepository } from 'typeorm';
-import { BadRequest } from 'http-errors';
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-
 import { promisify } from 'util';
+import { BadRequest } from 'http-errors';
+import { getCustomRepository } from 'typeorm';
+import { classToPlain } from 'class-transformer';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 
 import { UsersRepositories } from '../repositories/UsersRepositories';
 import { jwtConfig } from '../../config/jsonwebtoken';
-import { classToPlain } from 'class-transformer';
 
 export interface AuthenticateContext {
   email: string;
@@ -26,11 +25,11 @@ class SessionsServices {
 
     const account = await usersRepositories.findOne({ email });
 
-    const isCorrectPassword = account
+    const isMatch = account
       ? await bcrypt.compare(plain, account.password)
       : false;
 
-    if (!isCorrectPassword) throw new BadRequest();
+    if (!isMatch) throw new BadRequest('No account found with this email');
 
     /**
      * - Sign token

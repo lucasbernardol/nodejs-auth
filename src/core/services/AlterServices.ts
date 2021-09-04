@@ -1,12 +1,10 @@
 import dayjs from 'dayjs';
+import { compare, hash } from 'bcryptjs';
+import { BadRequest } from 'http-errors';
+import { getCustomRepository } from 'typeorm';
 import { classToPlain } from 'class-transformer';
 
-import { getCustomRepository } from 'typeorm';
-import { BadRequest } from 'http-errors';
-import { compare, hash } from 'bcryptjs';
-
 import { randomBytesAsync } from '../utilities/randomBytesAsync';
-
 import { UsersRepositories } from '../repositories/UsersRepositories';
 
 export interface UpdateContext {
