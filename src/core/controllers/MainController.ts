@@ -1,5 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
+/**
+ * @class MainController
+ */
 class MainController {
   public main(request: Request, response: Response, next: NextFunction) {
     try {

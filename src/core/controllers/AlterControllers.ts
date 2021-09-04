@@ -4,7 +4,7 @@ import { MailService } from '../services/SendMailService';
 import { AlterServices } from '../services/AlterServices';
 
 /**
- * @class
+ * @class AlterControllers
  */
 class AlterControllers {
   async change(request: Request, response: Response, next: NextFunction) {

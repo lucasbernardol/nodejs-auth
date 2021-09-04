@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { SessionsServices } from '../services/SessionsServices';
 
 /**
- * @class
+ * @class SessionsControllers
  */
 class SessionsControllers {
   async signIn(request: Request, response: Response, next: NextFunction) {
