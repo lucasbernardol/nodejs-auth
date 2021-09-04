@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import httpError, { Unauthorized, BadRequest } from 'http-errors';
+import { promisify } from 'util';
 
 import {
   verify,
@@ -10,26 +11,25 @@ import {
   TokenExpiredError,
 } from 'jsonwebtoken';
 
-import { promisify } from 'util';
-
-export const isFunction = (value: any) => {
-  return typeof value === 'function';
-};
+import { isFunction } from '../utilities/isFunction';
 
 export interface Options {
   /**
    * @default 'authorization'
    */
   header?: string;
+  /**
+   * - Available headers
+   */
+  headers?: string[];
   secret: string;
-  avaliableHeaders?: string[];
   verifyOptions?: VerifyOptions;
   credentialsRequired?: boolean;
   /**
    * - Optional synchronous function, used to search token in
    * request object `query`, `headers`, etc.
    */
-  tokenInRequest?: (request: Request, defaultHeader: string) => string;
+  tokenRequest?: (request: Request, defaultHeader: string) => string;
   /**
    * - "jwtPayload.sub"
    * @default true
@@ -39,7 +39,7 @@ export interface Options {
 
 export interface Decoded {
   /**
-   * - unique identifier for user authentication, ID
+   * - ID, unique identifier
    */
   id: string | null;
   decoded: JwtPayload | any;
@@ -47,33 +47,35 @@ export interface Decoded {
 
 export function authenticate(options: Options) {
   /**
-   * - RegExp, select whitespaces
+   * - regular expression to select `whitespaces` from a string
+   * @constant separator
    */
   const separator = /\s/;
 
   /**
-   * - RegExp, validate "Bearer" prefix.
+   * - Regular expression to validate `Bearer`
+   * @constant bearerTokenValidate
    */
-  const regExpBearerValidation = /^Bearer$/i;
+  const bearerTokenValidate = /^Bearer$/i;
 
   function avaliableHeadersInRequest(request: Request, headers: string[]) {
-    let authorization: string = null;
+    let authorizationToken: string = null;
 
-    for (let header of headers) {
-      const validHeaderName = header.trim().toLowerCase();
+    let interactionIndexes = 0;
+    while (interactionIndexes < headers.length) {
+      const authorizationHeader = headers[interactionIndexes].trim();
 
-      const headerInRequest = validHeaderName in request.headers;
+      const hasHeaderInRequest = authorizationHeader in request.headers;
 
-      if (headerInRequest) {
-        /**
-         * - get the first header found;
-         */
-        authorization = request.get(validHeaderName);
-        break;
+      if (hasHeaderInRequest) {
+        authorizationToken = request.get(authorizationHeader);
+        break; // first header
       }
+
+      interactionIndexes++;
     }
 
-    return authorization;
+    return authorizationToken;
   }
 
   function getUserIdentifier(decoded: JwtPayload, completed: boolean): string {
@@ -86,35 +88,30 @@ export function authenticate(options: Options) {
   return async (request: Request, response: Response, next: NextFunction) => {
     const {
       header = 'authorization',
-      avaliableHeaders = [],
-      tokenInRequest,
+      headers = [],
+      tokenRequest,
       credentialsRequired = true,
     } = options;
 
-    /**
-     * - token, (JWT)
-     */
-    let authorizationToken: string = null;
+    let token: string = null;
 
-    const isTokenCallBack = tokenInRequest ? isFunction(tokenInRequest) : null;
+    const isTokenCallBackFn = tokenRequest ? isFunction(tokenRequest) : null;
 
-    if (isTokenCallBack) {
+    if (isTokenCallBackFn) {
       try {
-        authorizationToken = tokenInRequest(request, header);
+        token = tokenRequest(request, header);
       } catch (error) {
         return next(error);
       }
     }
 
-    const hasHeadersOrEmptyToken =
-      !authorizationToken && Boolean(request.headers);
+    const hasTokenOrRequestHeaders = !token && Boolean(request.headers);
 
-    if (hasHeadersOrEmptyToken) {
-      const isArray =
-        Array.isArray(avaliableHeaders) && avaliableHeaders.length >= 1;
+    if (hasTokenOrRequestHeaders) {
+      const isAvaliableHeaders = Array.isArray(headers) && headers.length >= 1;
 
-      const authorizationHeader = isArray
-        ? avaliableHeadersInRequest(request, avaliableHeaders)
+      const authorizationHeader = isAvaliableHeaders
+        ? avaliableHeadersInRequest(request, headers)
         : request.get(header);
 
       if (authorizationHeader) {
@@ -124,24 +121,24 @@ export function authenticate(options: Options) {
 
         if (authorizationHeaderLength) {
           return next(
-            new BadRequest('Token malformed, Header: Bearer [token]')
+            new BadRequest('Token malformed, Authorization: Bearer [token]')
           );
         }
 
-        const [bearer, token] = authorizationSplitted;
+        const [bearer, authorizationToken] = authorizationSplitted;
 
-        const isBearer = regExpBearerValidation.test(bearer);
+        const isBearer = bearerTokenValidate.test(bearer);
 
         if (!isBearer) {
           return next(
-            new Unauthorized('Token malformed, Header: Bearer [token]')
+            new Unauthorized('Token malformed, Authorization: Bearer [token]')
           );
         }
 
-        authorizationToken = token;
+        token = authorizationToken;
       } else {
         if (credentialsRequired) {
-          return next(new Unauthorized('Authorization token not provided!'));
+          return next(new Unauthorized('No authorization token was found!'));
         }
 
         return next();
@@ -160,23 +157,20 @@ export function authenticate(options: Options) {
         verify
       );
 
-      /**
-       * - merged, options (JWT)
-       */
       const merged = {
         ...verifyOptions,
       };
 
-      const decoded = await verifyAsync(authorizationToken, secret, merged);
+      const decoded = await verifyAsync(token, secret, merged);
 
       const isCompleted = verifyOptions?.complete;
 
       const id = containsId ? getUserIdentifier(decoded, isCompleted) : null;
 
-      const properties = {
-        id,
-        decoded,
-      };
+      /**
+       * - merged properties
+       */
+      const properties = { id, decoded };
 
       user = properties;
     } catch (error) {
@@ -200,14 +194,10 @@ export function authenticate(options: Options) {
         return next(httpError(401, 'Token not active!', { date }));
       }
 
-      return next(new Unauthorized('Invalid authorization token!'));
+      return next(new Unauthorized('Authorization token is invalid!'));
     }
 
-    /**
-     * - "request.user"
-     */
     Object.assign(request, { user });
-
     return next();
   };
 }
