@@ -7,6 +7,7 @@ import { MainController } from './core/controllers/MainController';
 import { SessionsControllers } from './core/controllers/SessionsControllers';
 import { UsersControllers } from './core/controllers/UsersControllers';
 import { AlterControllers } from './core/controllers/AlterControllers';
+import { AddressControllers } from './core/controllers/AddressControllers';
 
 import { account } from './core/validators/UsersValidators';
 
@@ -69,7 +70,7 @@ routes.delete(
 );
 
 /**
- * Path: '/alter'
+ * Path: "/alter"
  */
 const alterControllers = new AlterControllers();
 
@@ -91,5 +92,13 @@ routes.post(
   celebrate({ body: resetSchema }),
   alterControllers.reset
 );
+
+/**
+ * Path: "/addresses"
+ */
+
+const addressController = new AddressControllers();
+
+routes.post('/address', secure, addressController.create);
 
 export { routes };
