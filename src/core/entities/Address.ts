@@ -4,7 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+
+import { User } from './User';
 
 import { v4 as uuid } from 'uuid';
 
@@ -42,6 +46,13 @@ class Address {
     default: null,
   })
   number: number;
+
+  @Column({ name: 'user_id' })
+  userId: string;
+
+  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User)
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;
