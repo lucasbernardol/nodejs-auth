@@ -107,6 +107,7 @@ routes.get('/address/me', secure, pagination, addressController.list);
 routes.get('/address/:id', secure, addressController.findByPk);
 
 routes.post('/address', secure, addressController.create);
+routes.put('/address/:id', secure, addressController.update);
 routes.delete('/address/:id', secure, addressController.delete);
 
 export { routes };
