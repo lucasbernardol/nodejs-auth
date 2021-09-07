@@ -6,6 +6,28 @@ import { AddressServices } from '../services/AddressServices';
  * @class AddressControllers
  */
 class AddressControllers {
+  /**
+   *  @public list
+   */
+  async list(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { page, limit } = request.query as any;
+
+      const { id } = request.user;
+
+      const services = new AddressServices();
+
+      const { address, meta } = await services.all({ id, limit, page });
+
+      return response.json({ address, meta });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
+   *  @public create
+   */
   async create(request: Request, response: Response, next: NextFunction) {
     try {
       const { city, street, district, zipcode, description, number, uf } =
@@ -26,7 +48,7 @@ class AddressControllers {
         id,
       });
 
-      return response.status(201).json(address);
+      return response.json(address);
     } catch (error) {
       return next(error);
     }

@@ -1,4 +1,6 @@
+import { paginate } from 'paging-util';
 import { getCustomRepository } from 'typeorm';
+
 import { AddressRepositories } from '../repositories/AddressRepositories';
 
 export interface Address {
@@ -15,10 +17,47 @@ export interface Address {
   uf?: string;
 }
 
+export interface ListContext {
+  id: string;
+  page: number;
+  limit: number;
+}
+
 /**
  * @class AddressServices
  */
 class AddressServices {
+  /**
+   * @public all
+   */
+  async all({ page, limit, id: userId }: ListContext) {
+    const addressesRepositories = getCustomRepository(AddressRepositories);
+
+    const total = await addressesRepositories.count({ userId });
+
+    const { range, pagination, offSet } = paginate({ total, page, limit });
+
+    const address = await addressesRepositories.find({
+      where: {
+        userId,
+      },
+      skip: offSet,
+      take: pagination.limit,
+    });
+
+    return {
+      address,
+      meta: {
+        offSet,
+        pagination,
+        range,
+      },
+    };
+  }
+
+  /**
+   * @public create
+   */
   async create(addresses: Address) {
     const { id, city, street, district, zipcode, description, number, uf } =
       addresses;
