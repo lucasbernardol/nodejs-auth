@@ -12,11 +12,7 @@ import { AddressControllers } from './core/controllers/AddressControllers';
 import { account } from './core/validators/UsersValidators';
 
 import { authenticate } from './core/middlewares/ensureAuthentication';
-
-const secure = authenticate({
-  secret: jwtConfig.secret,
-  headers: ['authorization'],
-});
+import { queryParams } from './core/middlewares/paginate';
 
 const {
   signUpSchema,
@@ -28,6 +24,15 @@ const {
 } = account.body;
 
 const routes = Router();
+
+const secure = authenticate({
+  secret: jwtConfig.secret,
+  headers: ['authorization'],
+  containsId: true,
+  //tokenRequest: (request) => String(request.query.token).split(' ')[1],
+});
+
+const pagination = queryParams();
 
 /**
  * Path: "/"
@@ -52,7 +57,7 @@ routes.post(
  */
 const usersControllers = new UsersControllers();
 
-routes.get('/users', secure, usersControllers.all);
+routes.get('/users', secure, pagination, usersControllers.all);
 routes.get('/users/me', secure, usersControllers.me);
 routes.get('/users/:id', secure, usersControllers.findId);
 
@@ -96,8 +101,9 @@ routes.post(
 /**
  * Path: "/addresses"
  */
-
 const addressController = new AddressControllers();
+
+routes.get('/address/me', secure, pagination, addressController.list);
 
 routes.post('/address', secure, addressController.create);
 
