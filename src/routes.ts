@@ -104,7 +104,7 @@ routes.post(
 const addressController = new AddressControllers();
 
 routes.get('/address/me', secure, pagination, addressController.list);
-
 routes.post('/address', secure, addressController.create);
+routes.delete('/address/:id', secure, addressController.delete);
 
 export { routes };
