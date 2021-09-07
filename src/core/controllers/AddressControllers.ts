@@ -25,6 +25,20 @@ class AddressControllers {
     }
   }
 
+  async findByPk(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { id } = request.params;
+
+      const services = new AddressServices();
+
+      const address = await services.find(id);
+
+      return response.json(address);
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   /**
    *  @public create
    */

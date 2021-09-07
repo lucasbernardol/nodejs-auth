@@ -56,6 +56,15 @@ class AddressServices {
   }
 
   /**
+   * @public find
+   */
+  async find(id: string) {
+    const addressesRepositories = getCustomRepository(AddressRepositories);
+
+    return (await addressesRepositories.findOne(id)) || null;
+  }
+
+  /**
    * @public create
    */
   async create(addresses: Address) {
