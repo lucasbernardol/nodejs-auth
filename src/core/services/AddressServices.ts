@@ -1,13 +1,10 @@
 import { paginate } from 'paging-util';
 import { getCustomRepository } from 'typeorm';
+import { BadRequest } from 'http-errors';
 
 import { AddressRepositories } from '../repositories/AddressRepositories';
 
 export interface Address {
-  /**
-   * - ID, unique identifier.
-   */
-  id: string;
   zipcode: string;
   city: string;
   street: string;
@@ -66,15 +63,20 @@ class AddressServices {
 
   /**
    * @public create
+   * @param userId unique identifier
    */
-  async create(addresses: Address) {
-    const { id, city, street, district, zipcode, description, number, uf } =
-      addresses;
+  async create(userId: string, context: Address) {
+    const { city, street, district, zipcode, description, number, uf } =
+      context;
 
     const addressRepositories = getCustomRepository(AddressRepositories);
 
+    const isAddress = await addressRepositories.findOne({ zipcode });
+
+    if (isAddress) throw new BadRequest('Address was found with the zip code!');
+
     const addressInstance = addressRepositories.create({
-      userId: id,
+      userId,
       city,
       street,
       district,
@@ -88,6 +90,24 @@ class AddressServices {
 
     return {
       address,
+    };
+  }
+
+  async update(id: string, context: Address) {
+    const addressesRepositories = getCustomRepository(AddressRepositories);
+
+    console.log({ ...context });
+
+    const address = await addressesRepositories.findOne(id);
+
+    if (!address) throw new BadRequest('No address was found!');
+
+    const { affected: updated } = await addressesRepositories.update(id, {
+      ...context,
+    });
+
+    return {
+      updated,
     };
   }
 

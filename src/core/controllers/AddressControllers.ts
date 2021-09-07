@@ -25,6 +25,9 @@ class AddressControllers {
     }
   }
 
+  /**
+   *  @public findByPk
+   */
   async findByPk(request: Request, response: Response, next: NextFunction) {
     try {
       const { id } = request.params;
@@ -51,7 +54,7 @@ class AddressControllers {
 
       const services = new AddressServices();
 
-      const { address } = await services.create({
+      const { address } = await services.create(id, {
         city,
         street,
         district,
@@ -59,10 +62,37 @@ class AddressControllers {
         description,
         number,
         uf,
-        id,
       });
 
       return response.json(address);
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
+   * @public update
+   */
+  async update(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { id } = request.params;
+
+      const { city, street, district, zipcode, description, number, uf } =
+        request.body;
+
+      const services = new AddressServices();
+
+      const { updated } = await services.update(id, {
+        city,
+        street,
+        district,
+        zipcode,
+        description,
+        number,
+        uf,
+      });
+
+      return response.json({ updated });
     } catch (error) {
       return next(error);
     }
