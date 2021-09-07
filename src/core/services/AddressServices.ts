@@ -81,6 +81,19 @@ class AddressServices {
       address,
     };
   }
+
+  /**
+   * @public delete
+   */
+  async delete(id: string) {
+    const addressesRepositories = getCustomRepository(AddressRepositories);
+
+    const { affected: deleted } = await addressesRepositories.delete(id);
+
+    return {
+      deleted,
+    };
+  }
 }
 
 export { AddressServices };

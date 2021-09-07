@@ -53,6 +53,23 @@ class AddressControllers {
       return next(error);
     }
   }
+
+  /**
+   * @public delete
+   */
+  async delete(request: Request, response: Response, next: NextFunction) {
+    try {
+      const { id } = request.params;
+
+      const services = new AddressServices();
+
+      const { deleted } = await services.delete(id);
+
+      return response.json({ deleted });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export { AddressControllers };
