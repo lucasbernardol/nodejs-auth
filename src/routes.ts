@@ -25,7 +25,7 @@ const {
 
 const routes = Router();
 
-const secure = authenticate({
+const authenticated = authenticate({
   secret: jwtConfig.secret,
   headers: ['authorization'],
   containsId: true,
@@ -44,70 +44,53 @@ routes.get('/', mainController.main);
 /**
  * Path: "/sessions"
  */
-const sessionController = new SessionsControllers();
+const sessions = new SessionsControllers();
 
-routes.post(
-  '/sessions',
-  celebrate({ body: signInSchema }),
-  sessionController.signIn
-);
+routes.post('/sessions', celebrate({ body: signInSchema }), sessions.signIn);
 
 /**
  * Path: "/users"
  */
-const usersControllers = new UsersControllers();
+const users = new UsersControllers();
 
-routes.get('/users', secure, pagination, usersControllers.all);
-routes.get('/users/me', secure, usersControllers.me);
-routes.get('/users/:id', secure, usersControllers.findId);
+routes.get('/users', authenticated, pagination, users.all);
+routes.get('/users/me', authenticated, users.me);
+routes.get('/users/:id', authenticated, users.findId);
 
-routes.post(
-  '/users',
-  celebrate({ body: signUpSchema }),
-  usersControllers.create
-);
+routes.post('/users', celebrate({ body: signUpSchema }), users.create);
 
 routes.delete(
   '/users',
-  secure,
+  authenticated,
   celebrate({ body: deleteSchema }),
-  usersControllers.remove
+  users.remove
 );
 
 /**
  * Path: "/alter"
  */
-const alterControllers = new AlterControllers();
+const alter = new AlterControllers();
 
 routes.post(
   '/alter/change',
-  secure,
+  authenticated,
   celebrate({ body: changeSchema }),
-  alterControllers.change
+  alter.change
 );
 
-routes.post(
-  '/alter/forgot',
-  celebrate({ body: forgotShema }),
-  alterControllers.forgot
-);
-
-routes.post(
-  '/alter/reset',
-  celebrate({ body: resetSchema }),
-  alterControllers.reset
-);
+routes.post('/alter/forgot', celebrate({ body: forgotShema }), alter.forgot);
+routes.post('/alter/reset', celebrate({ body: resetSchema }), alter.reset);
 
 /**
- * Path: "/addresses"
+ * Path: "/address"
  */
-const addressController = new AddressControllers();
+const address = new AddressControllers();
 
-routes.get('/address/me', secure, pagination, addressController.list);
-routes.get('/address/:id', secure, addressController.findByPk);
+routes.get('/address', authenticated, pagination, address.list);
+routes.get('/address/:id', authenticated, address.findByPk);
 
-routes.post('/address', secure, addressController.create);
-routes.put('/address/:id', secure, addressController.update);
-routes.delete('/address/:id', secure, addressController.delete);
+routes.post('/address', authenticated, address.create);
+routes.put('/address/:id', authenticated, address.update);
+routes.delete('/address/:id', authenticated, address.delete);
 
 export { routes };
