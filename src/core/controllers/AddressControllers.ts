@@ -5,7 +5,7 @@ import { AddressServices } from '../services/AddressServices';
 /**
  * @class AddressControllers
  */
-class AddressControllers {
+export class AddressControllers {
   /**
    *  @public list
    */
@@ -115,5 +115,3 @@ class AddressControllers {
     }
   }
 }
-
-export { AddressControllers };
