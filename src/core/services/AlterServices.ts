@@ -1,27 +1,27 @@
-import dayjs from 'dayjs';
-import { compare, hash } from 'bcryptjs';
-import { BadRequest } from 'http-errors';
 import { getCustomRepository } from 'typeorm';
 import { classToPlain } from 'class-transformer';
+import { compare, hash } from 'bcryptjs';
+import { BadRequest } from 'http-errors';
+import dayjs from 'dayjs';
 
 import { randomBytesAsync } from '../utilities/randomBytesAsync';
 import { UsersRepositories } from '../repositories/UsersRepositories';
 
-export interface UpdateContext {
+export type Update = {
   id: string;
   oldPassword: string;
   password: string;
-}
+};
 
-export interface ResetContext {
+export type Reset = {
   token: string;
   password: string;
-}
+};
 
 /**
- * @class
+ * @class AlterServices
  */
-class AlterServices {
+export class AlterServices {
   /**
    * - bcrypt, salt length
    */
@@ -32,12 +32,15 @@ class AlterServices {
    */
   private size: number = 22;
 
+  constructor(private repositories = getCustomRepository(UsersRepositories)) {}
+
+  /**
+   * @public forgot
+   */
   async forgot(email: string) {
-    const usersRepositories = getCustomRepository(UsersRepositories);
+    const account = await this.repositories.findOne({ email });
 
-    const account = await usersRepositories.findOne({ email });
-
-    if (!account) throw new BadRequest();
+    if (!account) throw new BadRequest('No account found with this email');
 
     const { id } = account;
 
@@ -48,7 +51,7 @@ class AlterServices {
 
     const expires = dayjs().add(30, 'minutes').toDate();
 
-    const { affected } = await usersRepositories.update(id, { token, expires });
+    const { affected } = await this.repositories.update(id, { token, expires });
 
     return {
       user: classToPlain(account),
@@ -58,38 +61,37 @@ class AlterServices {
     };
   }
 
-  async reset(context: ResetContext) {
+  /**
+   * @public reset
+   */
+  async reset(context: Reset) {
     const { token, password: plain } = context;
 
-    const usersRepositories = getCustomRepository(UsersRepositories);
+    const account = await this.repositories.findOne({ token });
 
-    const account = await usersRepositories.findOne({ token });
-
-    if (!account) throw new BadRequest();
+    if (!account) throw new BadRequest('No account was found');
 
     const { expires, id } = account;
 
-    const isExpiredToken = dayjs().isAfter(expires, 'milliseconds');
-
-    if (isExpiredToken) throw new BadRequest('Token expired!');
-
     /**
-     * - hash, password
+     * - Expiration
      */
-    const password = await hash(plain, this.salt);
+    const isAfterExpiration = dayjs().isAfter(expires, 'milliseconds');
 
-    const { affected: updated } = await usersRepositories.update(id, {
+    if (isAfterExpiration) throw new BadRequest('Token expired!');
+
+    const { affected } = await this.repositories.update(id, {
       token: null,
       expires: null,
-      password,
+      password: await hash(plain, this.salt),
     });
 
     return {
-      updated,
+      updated: affected,
     };
   }
 
-  async change(context: UpdateContext) {
+  async change(context: Update) {
     const { id, oldPassword, password: plain } = context;
 
     const usersRepositories = getCustomRepository(UsersRepositories);
@@ -100,7 +102,7 @@ class AlterServices {
       ? await compare(oldPassword, account.password)
       : false;
 
-    if (!isMatch) throw new BadRequest();
+    if (!isMatch) throw new BadRequest('Invalid passwords');
 
     /**
      * - hash, update passwords
@@ -114,5 +116,3 @@ class AlterServices {
     };
   }
 }
-
-export { AlterServices };

@@ -1,27 +1,28 @@
-import nodemailer, { Transporter } from 'nodemailer';
+import nodemailer from 'nodemailer';
 import handlebars from 'handlebars';
 import { resolve } from 'path';
 import fs from 'fs';
 
 import config from '../../config/nodemailer';
 
-export interface SentMailOptions {
+export type SentMailOptions = {
   to: string;
   subject: string;
   variables: object | any;
   template: string;
-}
+};
 
-class MailService {
+/**
+ * @class MailService
+ */
+export class MailService {
+  constructor(
+    private client = nodemailer.createTransport(config.transporter)
+  ) {}
+
   /**
-   * - nodemailer, transporter
+   * @public sendMessage
    */
-  private client: Transporter;
-
-  public constructor() {
-    this.client = nodemailer.createTransport(config.transporter);
-  }
-
   async sendMessage(options: SentMailOptions) {
     const { to, subject, variables, template } = options;
 
@@ -41,5 +42,3 @@ class MailService {
     return { sentMessageInfo };
   }
 }
-
-export { MailService };

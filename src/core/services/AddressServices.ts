@@ -4,7 +4,7 @@ import { paginate } from 'paging-util';
 
 import { AddressRepositories } from '../repositories/AddressRepositories';
 
-export interface Address {
+export type Address = {
   id?: string;
   zipcode: string;
   city: string;
@@ -13,28 +13,26 @@ export interface Address {
   description?: string;
   number?: number;
   uf?: string;
-}
+};
 
-export interface ListContext {
+export type List = {
   id: string;
   page: number;
   limit: number;
-}
+};
 
 /**
  * @class AddressServices
  */
 export class AddressServices {
-  public repositories: AddressRepositories;
-
-  public constructor() {
-    this.repositories = getCustomRepository(AddressRepositories);
-  }
+  constructor(
+    private repositories = getCustomRepository(AddressRepositories)
+  ) {}
 
   /**
    * @public all
    */
-  async all(context: ListContext) {
+  async all(context: List) {
     const { id, limit, page } = context;
 
     const total = await this.repositories.count({ userId: id });
@@ -63,9 +61,9 @@ export class AddressServices {
    * @public find
    */
   async find(id: string) {
-    const addressResult = await this.repositories.findOne(id);
+    const address = await this.repositories.findOne(id);
 
-    return addressResult ? addressResult : null;
+    return address ? address : null;
   }
 
   /**
@@ -75,9 +73,7 @@ export class AddressServices {
     const { city, street, district, zipcode, description, number, uf } =
       context;
 
-    const addressRepositories = getCustomRepository(AddressRepositories);
-
-    const addressInstance = addressRepositories.create({
+    const addressInstance = this.repositories.create({
       city,
       street,
       district,
@@ -88,7 +84,7 @@ export class AddressServices {
       userId: id,
     });
 
-    const address = await addressRepositories.save(addressInstance);
+    const address = await this.repositories.save(addressInstance);
 
     return {
       address,
@@ -122,10 +118,10 @@ export class AddressServices {
    * @public delete
    */
   async delete(id: string) {
-    const { affected: deleted } = await this.repositories.delete(id);
+    const { affected } = await this.repositories.delete(id);
 
     return {
-      deleted,
+      deleted: affected,
     };
   }
 }
