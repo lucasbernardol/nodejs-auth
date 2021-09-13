@@ -1,32 +1,37 @@
-import dayjs from 'dayjs';
-import bcrypt from 'bcryptjs';
-import { promisify } from 'util';
-import { BadRequest } from 'http-errors';
-import { getCustomRepository } from 'typeorm';
+import { sign, Secret, SignOptions } from 'jsonwebtoken';
 import { classToPlain } from 'class-transformer';
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import { getCustomRepository } from 'typeorm';
+import { BadRequest } from 'http-errors';
+import bcrypt from 'bcryptjs';
+
+import dayjs from 'dayjs';
+
+import { promisify } from 'util';
 
 import { UsersRepositories } from '../repositories/UsersRepositories';
 import { jwtConfig } from '../../config/jsonwebtoken';
 
-export interface AuthenticateContext {
+export type Authenticate = {
   email: string;
   password: string;
-}
+};
 
 /**
- * @class
+ * @class SessionsServices
  */
-class SessionsServices {
-  async authenticate(context: AuthenticateContext) {
-    const { email, password: plain } = context;
+export class SessionsServices {
+  constructor(private repositories = getCustomRepository(UsersRepositories)) {}
 
-    const usersRepositories = getCustomRepository(UsersRepositories);
+  /**
+   * @public authenticate
+   */
+  async authenticate(context: Authenticate) {
+    const { email, password: plainText } = context;
 
-    const account = await usersRepositories.findOne({ email });
+    const account = await this.repositories.findOne({ email });
 
     const isMatch = account
-      ? await bcrypt.compare(plain, account.password)
+      ? await bcrypt.compare(plainText, account.password)
       : false;
 
     if (!isMatch) throw new BadRequest('No account found with this email');
@@ -34,29 +39,25 @@ class SessionsServices {
     /**
      * - Sign token
      */
-    const signTokenAsync = promisify<any, Secret, SignOptions, string>(
-      jwt.sign
-    );
+    const signAsync = promisify<any, Secret, SignOptions, string>(sign);
 
     const { secret, expires } = jwtConfig;
 
-    const token = await signTokenAsync({}, secret, {
+    const accessToken = await signAsync({}, secret, {
       expiresIn: expires,
       subject: account.id,
     });
 
-    const tokenExpiresInDays = expires / 3600;
+    const accessTokenExpiresInHours = Math.floor(expires / 3600);
 
-    const tokenExpires = dayjs().add(tokenExpiresInDays, 'hours').toDate();
+    const expiration = dayjs().add(accessTokenExpiresInHours, 'hours').toDate();
 
     return {
       account: classToPlain(account),
       session: {
-        token,
-        expires: tokenExpires,
+        token: accessToken,
+        expires: expiration,
       },
     };
   }
 }
-
-export { SessionsServices };
