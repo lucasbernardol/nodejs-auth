@@ -6,7 +6,7 @@ import { AlterServices } from '../services/AlterServices';
 /**
  * @class AlterControllers
  */
-class AlterControllers {
+export class AlterControllers {
   async change(request: Request, response: Response, next: NextFunction) {
     try {
       const { id } = request.user;
@@ -65,5 +65,3 @@ class AlterControllers {
     }
   }
 }
-
-export { AlterControllers };

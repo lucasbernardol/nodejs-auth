@@ -5,17 +5,17 @@ import { UsersServices } from '../services/UsersServices';
 /**
  * @class UsersControllers
  */
-class UsersControllers {
+export class UsersControllers {
+  /**
+   * @public all
+   */
   async all(request: Request, response: Response, next: NextFunction) {
     try {
-      const { page, limit } = request.query;
+      const { page, limit } = request.query as any;
 
       const services = new UsersServices();
 
-      const { users, meta } = await services.list({
-        page: Number(page) || 1,
-        limit: Number(limit) || 10,
-      });
+      const { users, meta } = await services.list({ page, limit });
 
       return response.json({ users, meta });
     } catch (error) {
@@ -23,7 +23,10 @@ class UsersControllers {
     }
   }
 
-  async findId(request: Request, response: Response, next: NextFunction) {
+  /**
+   * @public findByPk
+   */
+  async findByPk(request: Request, response: Response, next: NextFunction) {
     try {
       const { id } = request.params;
 
@@ -37,6 +40,9 @@ class UsersControllers {
     }
   }
 
+  /**
+   * @public create
+   */
   async create(request: Request, response: Response, next: NextFunction) {
     try {
       const { name, username, email, password } = request.body;
@@ -51,6 +57,9 @@ class UsersControllers {
     }
   }
 
+  /**
+   * @public me
+   */
   async me(request: Request, response: Response, next: NextFunction) {
     try {
       const { id } = request.user;
@@ -65,6 +74,9 @@ class UsersControllers {
     }
   }
 
+  /**
+   * @public remove
+   */
   async remove(request: Request, response: Response, next: NextFunction) {
     try {
       const { id } = request.user;
@@ -81,5 +93,3 @@ class UsersControllers {
     }
   }
 }
-
-export { UsersControllers };

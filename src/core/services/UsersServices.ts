@@ -108,7 +108,8 @@ export class UsersServices {
       ? await bcrypt.compare(password, user.password)
       : false;
 
-    if (!isMatch) throw new BadRequest('Invalid passwords');
+    if (!isMatch)
+      throw new BadRequest('No accounts found or invalid passwords');
 
     const { affected } = await this.repositories.delete(id);
 

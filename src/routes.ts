@@ -9,23 +9,15 @@ import { UsersControllers } from './core/controllers/UsersControllers';
 import { AlterControllers } from './core/controllers/AlterControllers';
 import { AddressControllers } from './core/controllers/AddressControllers';
 
-import { account } from './core/validators/UsersValidators';
+import usersSchemas from './core/validators/users.validators';
+import addressSchemas from './core/validators/address.validators';
 
 import { authenticate } from './core/middlewares/ensureAuthentication';
 import { queryParams } from './core/middlewares/paginate';
 
-const {
-  signUpSchema,
-  signInSchema,
-  deleteSchema,
-  changeSchema,
-  forgotShema,
-  resetSchema,
-} = account.body;
-
 const routes = Router();
 
-const authenticated = authenticate({
+const secure = authenticate({
   secret: jwtConfig.secret,
   headers: ['authorization'],
   containsId: true,
@@ -46,22 +38,25 @@ routes.get('/', mainController.main);
  */
 const sessions = new SessionsControllers();
 
-routes.post('/sessions', celebrate({ body: signInSchema }), sessions.signIn);
+const { signIn } = usersSchemas.body;
+
+routes.post('/sessions', celebrate({ body: signIn }), sessions.signIn);
 
 /**
  * Path: "/users"
  */
 const users = new UsersControllers();
 
-routes.get('/users', authenticated, pagination, users.all);
-routes.get('/users/me', authenticated, users.me);
-routes.get('/users/:id', authenticated, users.findId);
+const { create, delete: deleteSchema } = usersSchemas.body;
 
-routes.post('/users', celebrate({ body: signUpSchema }), users.create);
+routes.get('/users', secure, pagination, users.all);
+routes.get('/users/me', secure, users.me);
+routes.get('/users/:id', secure, users.findByPk);
+routes.post('/users', celebrate({ body: create }), users.create);
 
 routes.delete(
   '/users',
-  authenticated,
+  secure,
   celebrate({ body: deleteSchema }),
   users.remove
 );
@@ -71,26 +66,30 @@ routes.delete(
  */
 const alter = new AlterControllers();
 
-routes.post(
-  '/alter/change',
-  authenticated,
-  celebrate({ body: changeSchema }),
-  alter.change
-);
+const { change, forgot, reset } = usersSchemas.body;
 
-routes.post('/alter/forgot', celebrate({ body: forgotShema }), alter.forgot);
-routes.post('/alter/reset', celebrate({ body: resetSchema }), alter.reset);
+routes.post('/alter/change', secure, celebrate({ body: change }), alter.change);
+routes.post('/alter/forgot', celebrate({ body: forgot }), alter.forgot);
+routes.post('/alter/reset', celebrate({ body: reset }), alter.reset);
 
 /**
  * Path: "/address"
  */
 const address = new AddressControllers();
 
-routes.get('/address', authenticated, pagination, address.list);
-routes.get('/address/:id', authenticated, address.findByPk);
+const { create: createSchema } = addressSchemas.body;
 
-routes.post('/address', authenticated, address.create);
-routes.put('/address/:id', authenticated, address.update);
-routes.delete('/address/:id', authenticated, address.delete);
+routes.get('/address', secure, pagination, address.list);
+routes.get('/address/:id', secure, address.findByPk);
+
+routes.post(
+  '/address',
+  secure,
+  celebrate({ body: createSchema }),
+  address.create
+);
+
+routes.put('/address/:id', secure, address.update);
+routes.delete('/address/:id', secure, address.delete);
 
 export { routes };

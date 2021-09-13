@@ -5,7 +5,7 @@ import { SessionsServices } from '../services/SessionsServices';
 /**
  * @class SessionsControllers
  */
-class SessionsControllers {
+export class SessionsControllers {
   async signIn(request: Request, response: Response, next: NextFunction) {
     try {
       const { email, password } = request.body;
@@ -23,5 +23,3 @@ class SessionsControllers {
     }
   }
 }
-
-export { SessionsControllers };
