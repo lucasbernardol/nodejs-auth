@@ -43,53 +43,46 @@ const { signIn } = usersSchemas.body;
 routes.post('/sessions', celebrate({ body: signIn }), sessions.signIn);
 
 /**
- * Path: "/users"
+ * - authenticated
+ */
+routes.use(secure);
+
+/**
+ * - Path: "/users"
  */
 const users = new UsersControllers();
 
 const { create, delete: deleteSchema } = usersSchemas.body;
 
-routes.get('/users', secure, pagination, users.all);
-routes.get('/users/me', secure, users.me);
-routes.get('/users/:id', secure, users.findByPk);
-routes.post('/users', celebrate({ body: create }), users.create);
+routes.get('/users', pagination, users.all);
+routes.get('/users/me', users.me);
+routes.get('/users/:id', users.findByPk);
 
-routes.delete(
-  '/users',
-  secure,
-  celebrate({ body: deleteSchema }),
-  users.remove
-);
+routes.post('/users', celebrate({ body: create }), users.create);
+routes.delete('/users', celebrate({ body: deleteSchema }), users.remove);
 
 /**
- * Path: "/alter"
+ * - Path: "/alter"
  */
 const alter = new AlterControllers();
 
 const { change, forgot, reset } = usersSchemas.body;
 
-routes.post('/alter/change', secure, celebrate({ body: change }), alter.change);
+routes.post('/alter/change', celebrate({ body: change }), alter.change);
 routes.post('/alter/forgot', celebrate({ body: forgot }), alter.forgot);
 routes.post('/alter/reset', celebrate({ body: reset }), alter.reset);
 
 /**
- * Path: "/address"
+ * - Path: "/address"
  */
 const address = new AddressControllers();
 
 const { create: createSchema } = addressSchemas.body;
 
-routes.get('/address', secure, pagination, address.list);
-routes.get('/address/:id', secure, address.findByPk);
-
-routes.post(
-  '/address',
-  secure,
-  celebrate({ body: createSchema }),
-  address.create
-);
-
-routes.put('/address/:id', secure, address.update);
-routes.delete('/address/:id', secure, address.delete);
+routes.get('/address', pagination, address.list);
+routes.get('/address/:id', address.findByPk);
+routes.post('/address', celebrate({ body: createSchema }), address.create);
+routes.put('/address/:id', address.update);
+routes.delete('/address/:id', address.delete);
 
 export { routes };
