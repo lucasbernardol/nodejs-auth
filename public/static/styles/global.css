@@ -2,13 +2,14 @@
   --color-dark-secondary: #151515;
   --color-dark: #121214;
 
-  --color-primaty-dark: #3a1078;
+  --color-primary-dark: #713ebd;
   --color-primary: #6d67e4;
 
   --color-text: #f0f0f5;
   --color-text-dark: #d3d3d4;
+  --color-text-very-dark: #aaaaaf;
 
-  --color-selection: hsla(234, 62%, 30%, 0.6);
+  --color-selection: hsla(234, 59%, 46%, 0.6);
 
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -54,7 +55,10 @@ body {
   background-color: var(--color-dark);
 }
 
-*::selection,
+*::selection {
+  background-color: var(--color-selection);
+}
+
 *::-moz-selection {
   background-color: var(--color-selection);
 }

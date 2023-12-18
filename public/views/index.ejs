@@ -11,10 +11,35 @@
       rel="stylesheet" />
 
     <link rel="stylesheet" href="/styles/global.css" type="text/css" />
+    <link rel="stylesheet" href="/styles/pages/home.css" type="text/css" />
 
-    <title>Document</title>
+    <title>Home</title>
   </head>
   <body>
-    Document
+    <div data-id="app">
+      <main class="main" data-id="main">
+        <div class="home">
+          <h2
+            class="home__title"
+            title="Faça parte da nossa comunidade e aproveite todos os beneficíos da
+        plataforma.">
+            <span class="home__title-actives"
+              ><%= data?.totalCount ?? 0 %> usuários ativos</span
+            >
+
+            Faça parte da nossa <br />
+            comunidade e aproveite todos os beneficíos da plataforma.
+          </h2>
+
+          <div class="action" data-id="action">
+            <a href="/sign-in" class="action__login">Entrar na plataforma</a>
+
+            <a href="/sign-up" class="action__register"
+              >Não possui cadastro? Registre-se agora!</a
+            >
+          </div>
+        </div>
+      </main>
+    </div>
   </body>
 </html>
