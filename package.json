@@ -5,11 +5,21 @@
   "repository": "https://github.com/lucasbernardoph/nodejs-auth.git",
   "author": "lucasbernardoph <lucasbernardo.touch@gmail.com>",
   "license": "MIT",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon --config ./nodemon.json"
+    "dev": "nodemon src/index.js --config ./nodemon.json"
   },
   "devDependencies": {
     "nodemon": "^3.0.2",
     "prettier": "^3.1.1"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
   }
 }
