@@ -12,8 +12,6 @@ export class AppController {
     try {
       const totalCount = await User.countDocuments();
 
-      console.log({ totalCount });
-
       return response.render('index', { data: { totalCount } });
     } catch (error) {
       return next(error);
