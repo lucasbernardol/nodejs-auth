@@ -11,6 +11,8 @@ import cors from 'cors';
 
 import morgan from 'morgan';
 
+import { routes } from './routes.js';
+
 export const app = express();
 
 app.use(express.json());
@@ -28,6 +30,4 @@ app.use(morgan('dev'));
 app.set('view engine', 'ejs');
 app.set('views', path.resolve(__dirname, '..', 'public', 'views'));
 
-app.get('/', (_, response) =>
-  response.render('index', { data: { totalCount: 24892 } }),
-);
+app.use(routes);
