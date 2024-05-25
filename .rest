@@ -1,0 +1,18 @@
+### LOGIN
+POST http://localhost:3333/api/sessions/sign-in HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "lucasbernardo.testing@gmail.com",
+  "password": "123456"
+}
+
+### REGISTER
+POST http://localhost:3333/api/sessions/sign-up HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "José Lucas",
+  "email": "lucasbernardo.testing@gmail.com",
+  "password": "123456"
+}

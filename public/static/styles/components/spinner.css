@@ -1,0 +1,33 @@
+.spinner {
+  --_spinner-w: 2.6rem;
+  --_spinner-h: 2.6rem;
+
+  --_spinner-rule-w: 2px;
+
+  --_spinner-color-thumb: #fff;
+  --_spinner-color: hsla(0, 0%, 97%, 0.8);
+
+  pointer-events: none;
+
+  overflow: hidden;
+
+  width: var(--_spinner-w);
+  height: var(--_spinner-h);
+
+  border-radius: 50%;
+
+  border: var(--_spinner-rule-w) solid var(--_spinner-color);
+  border-top-color: var(--_spinner-color-thumb);
+
+  animation: Spin 0.4s ease-in-out infinite;
+}
+
+@keyframes Spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

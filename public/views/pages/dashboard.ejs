@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR" translate="yes">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/styles/global.css" type="text/css" />
+
+    <link rel="stylesheet" href="/styles/components/buttons.css" />
+    <link rel="stylesheet" href="/styles/pages/dashboard.css" type="text/css" />
+
+    <script
+      defer
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
+    ></script>
+
+    <script defer src="/scripts/dashboard.js"></script>
+
+    <title>Dashboard. Bem-vindo(a) <%= user.name %></title>
+  </head>
+  <body data-id="body">
+    <div class="app" data-id="app">
+      <div class="container" data-id="container">
+        <header class="header">
+          <button
+            type="button"
+            class="button rounded class header__logout"
+            data-id="logout"
+          >
+            Logout
+          </button>
+        </header>
+
+        <main class="profile" data-id="profile">
+          <div class="profile__header">
+            <div class="profile__avatar">
+              <img
+                src="<%= user?.gravatar ? user.gravatar : user.avatar %>"
+                alt="<%= user.name %>"
+                class="profile__img"
+                title="<%= user.name %>"
+              />
+            </div>
+            <h2 class="profile__username"><%= user.name %></h2>
+          </div>
+
+          <span class="profile__creation">
+            Membro desde: <%= new Date(user?.createdAt).toLocaleDateString() %>
+          </span>
+        </main>
+
+        <small class="account_id">Usuário: <%= user._id %></small>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+.button {
+  --_button-background: var(--color-primary);
+  --_button-background-hover: var(--color-primary-dark);
+
+  --_button-round: 0.4rem;
+
+  --_button-padding-top: 1.6rem;
+  --_button-padding-left: 1.6rem;
+  --_button-padding-right: 1.6rem;
+  --_button-padding-bottom: 1.6rem;
+
+  --_button-width: 15.2rem;
+  --_button-height: 5.4rem;
+
+  position: relative;
+
+  overflow: hidden;
+
+  width: var(--_button-width);
+  height: var(--_button-height);
+
+  font-size: 1.6rem;
+  color: var(--color-text);
+
+  padding: var(--_button-padding-top) var(--_button-padding-left)
+    var(--_button-padding-bottom) var(--_button-padding-right);
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  background-color: var(--_button-background);
+
+  transition: background 0.6s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  cursor: pointer;
+}
+
+.button.square {
+  border-radius: 0;
+}
+
+.button.rounded {
+  border-radius: var(--_button-round);
+}
+
+.button:hover {
+  background-color: var(--_button-background-hover);
+}

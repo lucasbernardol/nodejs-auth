@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.resolve(__dirname, '..', 'public', 'static')));
 
-app.use(helmet());
+// app.use(helmet());
 app.use(cors());
 
 app.use(cookie());

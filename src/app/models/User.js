@@ -36,8 +36,7 @@ const schema = new Schema(
     password: {
       type: String,
       required: true,
-      minLength: 8,
-      maxLength: 32,
+      trim: true,
       select: false,
     },
   },

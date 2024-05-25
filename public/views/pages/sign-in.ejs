@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="pt-br" translate="yes">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/styles/global.css" type="text/css" />
+
+    <link rel="stylesheet" href="/styles/components/spinner.css" />
+
+    <link rel="stylesheet" href="/styles/form.css" type="text/css" />
+
+    <script defer type="text/javascript" src="/scripts/sign-in.js"></script>
+
+    <title>Sign In</title>
+  </head>
+  <body>
+    <div class="app" data-id="app">
+      <div class="container" data-id="container">
+        <form method="POST" class="form" data-id="form">
+          <fieldset class="form_fieldset">
+            <legend class="form__title">Faça seu login</legend>
+
+            <div class="form__group">
+              <label for="email" class="sr-only">Endereço de e-mail</label>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                required
+                minlength="8"
+                autocomplete="hidden"
+                placeholder="Endereço de e-mail"
+              />
+
+              <img
+                src="/icons/email.svg"
+                title="Email icon"
+                alt="Email svg icon"
+              />
+            </div>
+
+            <div class="form__group">
+              <label for="password" class="sr-only">Senha</label>
+              <input
+                id="password"
+                type="password"
+                name="password"
+                required
+                minlength="6"
+                maxlength="32"
+                placeholder="Senha"
+              />
+
+              <img
+                src="/icons/lock.svg"
+                title="Lock icon"
+                alt="Lock svg icon"
+              />
+            </div>
+
+            <a href="/forgot-password" class="form__forgot"
+              >Esqueci minha senha</a
+            >
+
+            <button type="submit" class="form__button">
+              <span class="form__button-text">Entrar</span>
+
+              <div class="spinner"></div>
+            </button>
+
+            <a href="/sign-up" class="form__sign-up"
+              >Não tem uma conta? Cadastre-se</a
+            >
+          </fieldset>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

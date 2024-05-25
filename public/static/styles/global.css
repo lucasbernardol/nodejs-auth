@@ -1,5 +1,6 @@
 * {
-  --color-dark-secondary: #151515;
+  --color-gray: #36363a;
+  --color-dark-secondary: #202024;
   --color-dark: #121214;
 
   --color-primary-dark: #713ebd;
@@ -8,6 +9,8 @@
   --color-text: #f0f0f5;
   --color-text-dark: #d3d3d4;
   --color-text-very-dark: #aaaaaf;
+
+  --color-text-very-dark: hsl(240, 3%, 68%, 0.4);
 
   --color-selection: hsla(234, 59%, 46%, 0.6);
 
@@ -107,4 +110,30 @@ img {
   -moz-window-dragging: no-drag;
 
   cursor: default;
+}
+
+.sr-only {
+  pointer-events: none;
+  user-select: none;
+
+  overflow: hidden;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  z-index: -1;
+
+  font-size: 0;
+
+  width: 0;
+  height: 0;
+
+  color: transparent;
+  caret-color: transparent;
+  accent-color: transparent;
+
+  cursor: default;
+
+  opacity: 0;
 }
