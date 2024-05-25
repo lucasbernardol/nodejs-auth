@@ -19,6 +19,7 @@ routes.get('/', isAuthenticaded(), AppController.home);
  * Auth routes
  */
 routes.get('/sign-in', isAuthenticaded(), SessionController.signIn);
+routes.get('/sign-up', isAuthenticaded(), SessionController.signUp);
 
 /**
  * Dashboard routes

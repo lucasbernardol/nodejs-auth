@@ -7,6 +7,7 @@ import { User } from '../../models/User.js';
 import { gravatar } from '../../utils/gravatar.js';
 import tokenConfigs from '../../../configs/token.js';
 import { milliseconds } from '../../utils/milliseconds.js';
+import { userMap } from '../../utils/userMap.js';
 
 const singJwt = promisify(jsonwebtoken.sign);
 
@@ -37,10 +38,7 @@ export class AuthenticateController {
         password: passwordHash,
       });
 
-      // REMOVE PASSWORD fields
-      delete user.password; // fix me
-
-      return response.status(200).json(user);
+      return response.status(200).json(userMap(user));
     } catch (error) {
       return next(error);
     }
@@ -76,9 +74,7 @@ export class AuthenticateController {
         maxAge: milliseconds(tokenConfigs.expiresIn),
       });
 
-      delete user.password;
-
-      return response.status(200).json(user);
+      return response.status(200).json(userMap(user));
     } catch (error) {
       return next(error);
     }
