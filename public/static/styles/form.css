@@ -34,7 +34,7 @@
 
   border-radius: 0.4rem;
 
-  transition: 0.6s cubic-bezier(0.215, 0.61, 0.355, 1);
+  transition: 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
 
   animation: Down 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045);
 }
@@ -151,6 +151,32 @@
 
   text-align: center;
   opacity: 0.6;
+}
+
+.form__sign-up.back {
+  position: relative;
+
+  color: var(--color-text);
+  font-weight: 600;
+  font-size: 1.5rem;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 1.4rem;
+
+  margin-top: 3rem;
+  padding-top: 3rem;
+
+  /* opacity: ; */
+
+  border-top: 1px solid var(--color-gray);
+}
+
+.form__sign-up.back img {
+  width: 1.4rem;
+  height: 1.4rem;
 }
 
 .form__sign-up:hover {
