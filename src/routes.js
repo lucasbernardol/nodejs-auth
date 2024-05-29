@@ -40,6 +40,10 @@ routes.post('/api/sessions/sign-in', AuthenticateController.login);
 routes.post('/api/sessions/sign-up', AuthenticateController.register);
 
 routes.post('/api/sessions/recovery-password', AuthenticateController.recovery);
+routes.post(
+  '/api/sessions/reset-password/:userId',
+  AuthenticateController.reset,
+);
 
 routes.delete(
   '/api/sessions/logout',

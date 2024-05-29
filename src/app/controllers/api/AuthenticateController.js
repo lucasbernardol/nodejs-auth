@@ -1,5 +1,7 @@
 import { promisify } from 'node:util';
 
+import { isValidObjectId } from 'mongoose';
+
 import jsonwebtoken from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
@@ -134,7 +136,7 @@ export class AuthenticateController {
         });
       }
 
-      const { token } = randomToken();
+      const { token } = await randomToken();
 
       // Using dayjs
       const recoveryExpiresAt = currentUnix + 5 * 60;
@@ -145,7 +147,7 @@ export class AuthenticateController {
           $set: {
             recoveryToken: token,
             recoveryExpiresAt,
-            recoryTokenSignAt: currentUnix,
+            recoverySignAt: currentUnix,
           },
         },
       );
@@ -159,6 +161,61 @@ export class AuthenticateController {
     } catch (error) {
       // log
       return next(error);
+    }
+  }
+
+  async reset(request, response, next) {
+    try {
+      const { userId } = request.params;
+      const { token } = request.query;
+
+      const { password, repeatPassword: _ } = request.body;
+
+      if (!isValidObjectId(userId)) {
+        return response.status(401).json({
+          message: 'Invalid account',
+        });
+      }
+
+      const user = await User.findById(userId).select([
+        '_id',
+        'recoveryToken',
+        'recoveryExpiresAt',
+      ]);
+
+      if (!user || user?.recoveryToken !== token) {
+        return response.status(401).json({
+          message: 'Invalid credentials!',
+        });
+      }
+
+      const currentUnixTimestamp = unix();
+
+      if (currentUnixTimestamp > user.recoveryExpiresAt) {
+        return response.status(401).json({
+          message: 'Token expired!',
+        });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+
+      await User.updateOne(
+        {
+          _id: userId,
+        },
+        {
+          $set: {
+            recoveryExpiresAt: null,
+            recoveryToken: null,
+            recoverySignAt: null,
+            password: passwordHash,
+          },
+        },
+      );
+
+      return response.status(202).end();
+    } catch (error) {
+      console.log(error);
     }
   }
 }
