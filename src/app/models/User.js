@@ -39,6 +39,30 @@ const schema = new Schema(
       trim: true,
       select: false,
     },
+
+    /*
+     Tokens
+    */
+    recoveryToken: {
+      type: String,
+      unique: true,
+      trim: true,
+      required: false,
+      default: null,
+    },
+
+    recoveryExpiresAt: {
+      // Unix timetamp
+      type: Number,
+      required: false,
+      default: null,
+    },
+
+    recorySignAt: {
+      type: Number,
+      required: false,
+      default: null,
+    },
   },
   {
     timestamps: true, // createdAt and updatedAt
