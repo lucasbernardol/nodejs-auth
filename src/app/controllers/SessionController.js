@@ -1,3 +1,5 @@
+import { isValidObjectId } from 'mongoose';
+
 export class SessionController {
   static ERROR_STATE = {};
 
@@ -33,10 +35,21 @@ export class SessionController {
   }
 
   async reset(request, response, next) {
-    // forgot password
+    const token = request.query?.token; // any string
+
+    const { subject: userId } = request.params;
+
+    if (!isValidObjectId(userId)) {
+      return response.redirect('/sign-in');
+    }
+
     try {
       return response.render('pages/reset-password', {
         error: SessionController.ERROR_STATE,
+        data: {
+          token,
+          userId,
+        },
       });
     } catch (error) {
       return next(error);

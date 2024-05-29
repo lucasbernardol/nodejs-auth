@@ -22,7 +22,11 @@ routes.get('/sign-in', isAuthenticaded(), SessionController.signIn);
 routes.get('/sign-up', isAuthenticaded(), SessionController.signUp);
 
 routes.get('/forgot-password', isAuthenticaded(), SessionController.recovery);
-routes.get('/reset-password', isAuthenticaded(), SessionController.reset);
+routes.get(
+  '/reset-password/:subject',
+  isAuthenticaded(),
+  SessionController.reset,
+);
 
 /**
  * Dashboard routes
