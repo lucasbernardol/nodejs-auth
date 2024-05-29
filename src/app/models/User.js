@@ -58,7 +58,7 @@ const schema = new Schema(
       default: null,
     },
 
-    recorySignAt: {
+    recoverySignAt: {
       type: Number,
       required: false,
       default: null,

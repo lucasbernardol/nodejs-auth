@@ -9,7 +9,12 @@ import tokenConfigs from '../../../configs/token.js';
 import { milliseconds } from '../../utils/milliseconds.js';
 import { userMap } from '../../utils/userMap.js';
 
+import { randomToken } from '../../utils/randomToken.js';
+import sendMail from '../../utils/sendMail.js';
+
 const singJwt = promisify(jsonwebtoken.sign);
+
+const unix = () => Math.floor(Date.now() / 1000); // Unix timestamp
 
 export class AuthenticateController {
   /**
@@ -94,6 +99,65 @@ export class AuthenticateController {
 
       return response.status(204).end();
     } catch (error) {
+      return next(error);
+    }
+  }
+
+  /**
+   * Logout
+   *
+   * @param {import('express').Request} request
+   * @param {import('express').Response} response
+   * @param {import('express').NextFunction} next
+   * @returns
+   */
+  async recovery(request, response, next) {
+    try {
+      const { email } = request.body;
+
+      const user = await User.findOne({ email }).select([
+        '_id',
+        'recoveryExpiresAt',
+      ]);
+
+      if (!user) {
+        return response.status(401).json({
+          message: 'Account not found!',
+        });
+      }
+
+      const currentUnix = unix(); // Unix seconds
+
+      if (user?.recoveryExpiresAt && user?.recoveryExpiresAt > currentUnix) {
+        return response.status(401).json({
+          message: 'Check your email!',
+        });
+      }
+
+      const { token } = randomToken();
+
+      // Using dayjs
+      const recoveryExpiresAt = currentUnix + 5 * 60;
+
+      await User.updateOne(
+        { email },
+        {
+          $set: {
+            recoveryToken: token,
+            recoveryExpiresAt,
+            recoryTokenSignAt: currentUnix,
+          },
+        },
+      );
+
+      await sendMail({
+        email,
+        resetPasswordUrl: `${process.env.HOST}/reset-password/${user._id}?token=${token}`,
+      });
+
+      return response.status(202).end();
+    } catch (error) {
+      // log
       return next(error);
     }
   }

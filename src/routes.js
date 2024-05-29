@@ -38,6 +38,9 @@ routes.get('/dashboard', authenticate(), DashboardController.profile);
  */
 routes.post('/api/sessions/sign-in', AuthenticateController.login);
 routes.post('/api/sessions/sign-up', AuthenticateController.register);
+
+routes.post('/api/sessions/recovery-password', AuthenticateController.recovery);
+
 routes.delete(
   '/api/sessions/logout',
   authenticate(),
