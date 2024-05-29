@@ -1,4 +1,4 @@
-import 'dotenv/config'
+import 'dotenv/config';
 
 import nodemailer from 'nodemailer';
 
@@ -37,10 +37,3 @@ export default async function sendMail({ email, resetPasswordUrl }) {
     `,
   });
 }
-
-sendMail({
-  email: 'jose.lukass03@gmail.com',
-  resetPasswordUrl: 'http://localhost:3333',
-})
-  .then(console.log)
-  .catch(console.log);
