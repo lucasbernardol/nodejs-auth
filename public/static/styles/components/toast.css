@@ -1,0 +1,127 @@
+.toast.active {
+  z-index: 999;
+
+  visibility: visible;
+  opacity: 1;
+
+  /* animation: Left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); */
+}
+
+.toast.active .toast-content {
+  animation: Left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  pointer-events: all;
+}
+
+.toast {
+  z-index: -1;
+
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  width: 100%;
+  height: 100vh;
+
+  background-color: transparent;
+
+  opacity: 0;
+
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@keyframes Left {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.toast-content.danger {
+  --_toast-color-background-icon: rgb(250, 139, 139);
+  --_toast-color-background: rgb(241, 81, 81);
+  --_toast-color-text: #f0f0f5;
+  --_toast-color-progress-thumb: rgb(197, 12, 12);
+}
+
+.toast-content {
+  --_toast-color-background-icon: rgb(130, 226, 130);
+  --_toast-color-background: rgb(69, 197, 69);
+  --_toast-color-text: #f0f0f5;
+  --_toast-color-progress-thumb: rgb(13, 107, 13);
+
+  pointer-events: none;
+
+  --_process-bar-percentage: 100%;
+  --_process-bar-till: 0.2s;
+
+  overflow: hidden;
+
+  position: absolute;
+
+  top: 2rem;
+  right: 2rem;
+
+  width: 100%;
+  max-width: 48rem;
+
+  background-color: var(--_toast-color-background);
+  padding: 2.2rem 1.6rem;
+
+  border-radius: 0.4rem;
+
+  display: flex;
+  align-items: center;
+
+  gap: 1.5rem;
+
+  transition: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.toast-content.toast-content--progress::after {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  content: '';
+
+  width: var(--_process-bar-percentage);
+  height: 3px;
+
+  background-color: var(--_toast-color-progress-thumb);
+  transition: width var(--_process-bar-till) linear;
+}
+
+.toast-content__text {
+  font-size: 1.6rem;
+  font-weight: 400;
+
+  color: var(--_toast-color-text);
+  line-height: 1.4;
+}
+
+.toast-content__button {
+  background: transparent;
+
+  width: 2.8rem;
+  height: 2.8rem;
+
+  padding: 0.5rem;
+  border-radius: 50%;
+}
+
+.toast-content__button img {
+  width: 100%;
+}
+
+.toast-content__button:hover {
+  background-color: var(--_toast-color-background-icon);
+}

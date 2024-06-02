@@ -2,6 +2,8 @@ import { promisify } from 'node:util';
 
 import { isValidObjectId } from 'mongoose';
 
+import { StatusCodes } from 'http-status-codes';
+
 import jsonwebtoken from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 
@@ -33,7 +35,9 @@ export class AuthenticateController {
       const userExists = await User.findOne({ email }).select(['_id']);
 
       if (userExists) {
-        return response.status(400).json({ message: 'Invalid email address' });
+        return response
+          .status(StatusCodes.BAD_REQUEST)
+          .json({ message: 'Invalid email address' });
       }
 
       const passwordHash = await bcrypt.hash(password, 10);
@@ -45,7 +49,7 @@ export class AuthenticateController {
         password: passwordHash,
       });
 
-      return response.status(200).json(userMap(user));
+      return response.status(StatusCodes.CREATED).json(userMap(user));
     } catch (error) {
       return next(error);
     }
@@ -58,7 +62,7 @@ export class AuthenticateController {
       const user = await User.findOne({ email }).select(['+password']).lean();
 
       if (!user) {
-        return response.status(400).json({
+        return response.status(StatusCodes.BAD_REQUEST).json({
           message: 'Invalid email/password',
         });
       }
@@ -66,7 +70,7 @@ export class AuthenticateController {
       const isValidPasswordHash = await bcrypt.compare(password, user.password);
 
       if (!isValidPasswordHash) {
-        return response.status(400).json({
+        return response.status(StatusCodes.BAD_REQUEST).json({
           message: 'Invalid email/password',
         });
       }
@@ -81,7 +85,7 @@ export class AuthenticateController {
         maxAge: milliseconds(tokenConfigs.expiresIn),
       });
 
-      return response.status(200).json(userMap(user));
+      return response.status(StatusCodes.OK).json(userMap(user));
     } catch (error) {
       return next(error);
     }
@@ -99,7 +103,7 @@ export class AuthenticateController {
     try {
       response.clearCookie('token'); // Remove current cookie
 
-      return response.status(204).end();
+      return response.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       return next(error);
     }
@@ -123,7 +127,7 @@ export class AuthenticateController {
       ]);
 
       if (!user) {
-        return response.status(401).json({
+        return response.status(StatusCodes.UNAUTHORIZED).json({
           message: 'Account not found!',
         });
       }
@@ -131,7 +135,7 @@ export class AuthenticateController {
       const currentUnix = unix(); // Unix seconds
 
       if (user?.recoveryExpiresAt && user?.recoveryExpiresAt > currentUnix) {
-        return response.status(401).json({
+        return response.status(StatusCodes.BAD_REQUEST).json({
           message: 'Check your email!',
         });
       }
@@ -157,7 +161,7 @@ export class AuthenticateController {
         resetPasswordUrl: `${process.env.HOST}/reset-password/${user._id}?token=${token}`,
       });
 
-      return response.status(202).end();
+      return response.status(StatusCodes.ACCEPTED).end();
     } catch (error) {
       // log
       return next(error);
@@ -172,7 +176,7 @@ export class AuthenticateController {
       const { password, repeatPassword: _ } = request.body;
 
       if (!isValidObjectId(userId)) {
-        return response.status(401).json({
+        return response.status(StatusCodes.BAD_REQUEST).json({
           message: 'Invalid account',
         });
       }
@@ -184,7 +188,7 @@ export class AuthenticateController {
       ]);
 
       if (!user || user?.recoveryToken !== token) {
-        return response.status(401).json({
+        return response.status(StatusCodes.UNAUTHORIZED).json({
           message: 'Invalid credentials!',
         });
       }
@@ -192,7 +196,7 @@ export class AuthenticateController {
       const currentUnixTimestamp = unix();
 
       if (currentUnixTimestamp > user.recoveryExpiresAt) {
-        return response.status(401).json({
+        return response.status(StatusCodes.UNAUTHORIZED).json({
           message: 'Token expired!',
         });
       }
@@ -213,9 +217,10 @@ export class AuthenticateController {
         },
       );
 
-      return response.status(202).end();
+      return response.status(StatusCodes.ACCEPTED).end();
     } catch (error) {
       console.log(error);
+      return next(error);
     }
   }
 }

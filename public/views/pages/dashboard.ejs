@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="/styles/global.css" type="text/css" />
 
     <link rel="stylesheet" href="/styles/components/buttons.css" />
+    <link rel="stylesheet" href="/styles/components/toast.css" />
     <link rel="stylesheet" href="/styles/pages/dashboard.css" type="text/css" />
 
     <script
@@ -21,43 +22,61 @@
       src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"
     ></script>
 
-    <script defer src="/scripts/dashboard.js"></script>
+    <script defer type="module" src="/scripts/dashboard.js"></script>
 
-    <title>Dashboard. Bem-vindo(a) <%= user.name %></title>
+    <title>Bem-vindo(a) <%= user.name %></title>
   </head>
   <body data-id="body">
     <div class="app" data-id="app">
       <div class="container" data-id="container">
-        <header class="header">
-          <button
-            type="button"
-            class="button rounded class header__logout"
-            data-id="logout"
-          >
-            Logout
-          </button>
-        </header>
-
-        <main class="profile" data-id="profile">
-          <div class="profile__header">
-            <div class="profile__avatar">
-              <img
-                src="<%= user?.gravatar ? user.gravatar : user.avatar %>"
-                alt="<%= user.name %>"
-                class="profile__img"
-                title="<%= user.name %>"
-              />
+        <aside class="sidebar" data-id="sidebar">
+          <div class="sidebar-profile">
+            <div class="sidebar-profile__avatar">
+              <img src="<%= user?.gravatar  %>" alt="<%= user.name %>" />
             </div>
-            <h2 class="profile__username"><%= user.name %></h2>
+
+            <span class="sidebar-profile__name"
+              ><%= user.name.split(' ')[0] %></span
+            >
+
+            <span class="sidebar-profile__membership"
+              >Membro desde: <%= new Date(user.createdAt).toLocaleDateString()
+              %></span
+            >
           </div>
 
-          <span class="profile__creation">
-            Membro desde: <%= new Date(user?.createdAt).toLocaleDateString() %>
-          </span>
-        </main>
+          <div class="sidebar-menu">
+            <ul class="sidebar-menu__links">
+              <!-- <li class="sidebar-menu__link">
+                <a href="" class="sidebar-menu__anchor">
+                  <img src="/icons/person.svg" alt="Person icon" />
+                  Perfil
+                </a>
+              </li>
 
-        <small class="account_id">Usuário: <%= user._id %></small>
+              <li class="sidebar-menu__link">
+                <a href="" class="sidebar-menu__anchor">
+                  <img src="/icons/person.svg" alt="Person icon" />
+                  Configurações
+                </a>
+              </li> -->
+
+              <li class="sidebar-menu_link sidebar-menu_link--logout">
+                <a class="sidebar-menu__anchor" data-id="logout">
+                  <img src="/icons/leave.png" alt="Encerrar sessão" />
+                  Sair
+                </a>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <div class="content" data-id="content">
+          <p class="user-id" title="ID usuário">Usuário: <%= user.id %></p>
+        </div>
       </div>
     </div>
+
+    <%- include('../components/toast.ejs') %>
   </body>
 </html>

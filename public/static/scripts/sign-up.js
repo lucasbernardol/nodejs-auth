@@ -1,46 +1,94 @@
-const form = document.querySelector('[data-id="form"]');
-const modal = document.querySelector('[data-id="modal"]');
+import Toast from '/scripts/classes/Toast.js';
+import Spinner from '/scripts/classes/Spinner.js';
 
-const sucessButton = document.querySelector('[data-id="sucess-redirect"]');
+const formElement = document.querySelector('[data-id="form"]');
 
-const spinner = document.querySelector('[data-id="spinner"]');
+class SignUp {
+  constructor({ formElement }) {
+    this.formElement = formElement;
 
-const API_URL = '/api/sessions/sign-up';
+    this.#listeners(); // Add events
+  }
 
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
+  #listeners() {
+    this.formElement.addEventListener('submit', (event) => this.#handle(event));
+  }
 
-  spinner.classList.add('open');
+  #log(data) {
+    console.log(data);
+  }
 
-  const name = event.target.name;
-  const email = event.target.email;
-  const password = event.target.password;
-
-  try {
-    const response = await fetch(API_URL, {
+  async #fetch({ name, email, password }) {
+    const response = await fetch('/api/sessions/sign-up', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name: name.value,
-        email: email.value.toLowerCase(),
-        password: password.value,
+        name,
+        email,
+        password,
       }),
     });
 
-    const data = await response.json();
+    const content = await response.json();
 
-    console.log(data);
-
-    if (response.status === 200) {
-      modal.classList.add('open');
-      spinner.classList.remove('open');
-
-      sucessButton.addEventListener('click', () => location.assign('/sign-in'));
-    }
-  } catch (error) {
-    //alert(error.message);
-    alert('Ocorreu um erro interno!');
+    return {
+      response,
+      content,
+    };
   }
-});
+
+  #formFields(target) {
+    return {
+      name: target.name.value,
+      email: target.email.value,
+      password: target.password.value,
+    };
+  }
+
+  #clearFormFields() {
+    this.formElement.reset();
+  }
+
+  async #handle(event) {
+    event.preventDefault();
+
+    const target = event.target;
+
+    const formFields = this.#formFields(target);
+
+    Spinner.show(); // loading
+
+    try {
+      const { response, content } = await this.#fetch(formFields);
+
+      Spinner.close();
+      //this.#clearFormFields();
+
+      // log
+      this.#log(content);
+
+      console.log(response);
+
+      if (response.status === 400) {
+        Toast.open()
+          .theme('danger')
+          .message('Endereço de e-mail inválido!')
+          .closingDispatch(5)
+          .progress();
+
+        return;
+      }
+
+      Toast.open()
+        .message('Cadastro realizado com sucesso!')
+        .closingDispatch(5, () => location.assign('/sign-in'))
+        .progress();
+    } catch (error) {
+      this.#log(error);
+    }
+  }
+}
+
+window.addEventListener('load', () => new SignUp({ formElement }));

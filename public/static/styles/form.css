@@ -23,12 +23,12 @@
   overflow: hidden;
 
   width: 100%;
-  max-width: 42rem; /* 720px */
+  max-width: 48rem;
 
   display: flex;
   flex-direction: column;
 
-  padding: 4.8rem;
+  padding: 8.4rem 6rem;
 
   background-color: var(--color-dark-secondary);
 
@@ -37,6 +37,10 @@
   transition: 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
 
   animation: Down 0.4s cubic-bezier(0.6, -0.28, 0.735, 0.045);
+}
+
+.form.form--transparent {
+  background-color: transparent;
 }
 
 .form__title {
@@ -75,6 +79,10 @@
   caret-color: var(--color-primary);
 
   transition: 0.6s border-color cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.form__group.form__group--secondary input {
+  background-color: var(--color-dark-secondary);
 }
 
 .form__group input:focus {
@@ -157,7 +165,7 @@
   position: relative;
 
   color: var(--color-text);
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1.5rem;
 
   display: flex;
@@ -169,9 +177,7 @@
   margin-top: 3rem;
   padding-top: 3rem;
 
-  /* opacity: ; */
-
-  border-top: 1px solid var(--color-gray);
+  opacity: 0.4;
 }
 
 .form__sign-up.back img {

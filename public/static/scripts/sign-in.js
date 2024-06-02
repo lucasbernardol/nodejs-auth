@@ -1,43 +1,78 @@
-const form = document.querySelector('[data-id="form"]');
+import Toast from '/scripts/classes/Toast.js';
+import Spinner from '/scripts/classes/Spinner.js'; //  modules
 
-const spinner = document.querySelector('[data-id="spinner"]');
+const formElement = document.querySelector('[data-id="form"]');
 
-const API_URL = '/api/sessions/sign-in';
+class SignIn {
+  constructor({ formElement }) {
+    this.formElement = formElement;
 
-form.addEventListener('submit', async (event) => {
-  event.preventDefault();
+    this.#listeners();
+  }
 
-  spinner.classList.add('open');
+  #listeners() {
+    this.formElement.addEventListener('submit', (event) => this.#handle(event));
+  }
 
-  const email = event.target.email;
-  const password = event.target.password;
+  #log(props) {
+    console.log(props);
+  }
 
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
+  #formFields(target) {
+    return {
+      email: target.email.value,
+      password: target.password.value,
+    };
+  }
+
+  async #fetch({ email, password }) {
+    const response = await fetch('/api/sessions/sign-in', {
       headers: {
         'Content-Type': 'application/json',
       },
-      // prettier-ignore
+      method: 'POST',
       body: JSON.stringify({
-        email: email.value.toLowerCase(),
-
-        password: password.value
+        email,
+        password,
       }),
     });
 
-    const data = await response.json();
+    const content = await response.json();
 
-    if (response.status === 200) {
-      console.log(data);
-      location.assign('/dashboard');
-    }
+    this.#log(content);
 
-    if (response.status === 400) {
-      alert('Credenciais invalidas!');
-    }
-  } catch (error) {
-    alert(error.message);
-    console.log(event.target);
+    return {
+      response,
+      content,
+    };
   }
-});
+
+  async #handle(event) {
+    event.preventDefault();
+
+    const target = event.target;
+
+    Spinner.show();
+
+    try {
+      const { response } = await this.#fetch(this.#formFields(target));
+
+      Spinner.close();
+
+      if (response.status === 200) {
+        // Redirect only
+        return location.assign('/dashboard');
+      }
+
+      Toast.open()
+        .theme('danger')
+        .message('Credenciais de acesso incorretas!')
+        .closingDispatch()
+        .progress();
+    } catch (error) {
+      this.#log(error);
+    }
+  }
+}
+
+window.addEventListener('load', () => new SignIn({ formElement }));

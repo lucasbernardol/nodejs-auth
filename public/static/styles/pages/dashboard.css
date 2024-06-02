@@ -2,128 +2,176 @@
   padding: 0;
 }
 
-.header {
-  --_header-height: 8.2rem;
-
+.container {
   width: 100%;
-  height: var(--_header-height);
-
-  padding: 0 2.8rem;
-  background-color: var(--color-dark-secondary);
+  min-height: 100vh;
 
   display: flex;
-
-  align-items: center;
-  justify-content: flex-end;
-
-  transition: 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-.header__logout {
-  --_button-width: auto;
-  --_button-height: auto;
-
-  --_button-padding-top: 1.2rem;
-  --_button-padding-bottom: 1.2rem;
-
-  --_button-padding-left: 1.8rem;
-  --_button-padding-right: 1.8rem;
-
-  --_button-radius: 0.3rem;
+@keyframes Showing {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
-.profile {
-  overflow: hidden;
+.sidebar {
+  flex: 1;
 
-  width: 90%;
-  max-width: 72rem;
-
-  background-color: var(--color-dark-secondary);
-  /* padding: 4.2rem; */
-
-  margin-top: 4rem;
-  margin-inline: auto;
-
-  border-radius: 0.4rem;
-}
-
-.profile__header {
-  padding: 2.8rem;
+  width: 100%;
+  max-width: 24rem;
 
   display: flex;
   flex-direction: column;
 
-  justify-content: center;
+  align-items: center;
+
+  margin: 4rem 0;
+  padding: 2.8rem;
+
+  border-radius: 0 0.8rem 0.8rem 0;
+
+  background-color: var(--color-dark-secondary);
+  border: 1px solid var(--color-gray);
+
+  transition: 0.6s cubic-bezier(0.39, 0.575, 0.565, 1);
+  animation: Showing 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.sidebar-profile {
+  display: flex;
+  flex-direction: column;
+
   align-items: center;
 }
 
-.profile__avatar {
-  --_avatar-sizes: 18rem;
-  --_avatar_radius: calc(var(--_avatar-sizes) / 2);
-
+.sidebar-profile__avatar {
   position: relative;
+
   overflow: hidden;
 
-  width: var(--_avatar-sizes);
-  height: var(--_avatar-sizes);
+  width: 12.8rem;
+  height: 12.8rem;
 
-  border: 2px solid transparent;
+  border-radius: 50%;
+  padding: 4px;
 
-  border-radius: var(--_avatar_radius); /*  50% */
+  border: 2px solid var(--color-primary);
 
-  transition: border 0.6s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  background-color: var(--color-dark);
+
+  object-fit: cover;
+  object-position: center;
+
+  transition: border-color 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 
-.profile__avatar:hover {
+.sidebar-profile__avatar:hover {
   border-color: var(--color-primary-dark);
 }
 
-.profile__img {
-  position: absolute;
-  top: 0;
-  left: 0;
-
+.sidebar-profile__avatar img {
+  /* position: absolute; */
   width: 100%;
   height: 100%;
+
+  border-radius: 50%;
 }
 
-.profile__username {
-  margin-top: 2.2rem;
+.sidebar-profile__name {
+  margin-top: 2.4rem;
 
-  font-size: 2.8rem;
-  font-weight: 700;
-
-  line-height: 1;
+  font-weight: 600;
+  font-size: 2.2rem;
   color: var(--color-text);
 
-  text-align: center;
-}
-
-.profile__creation {
-  display: block;
-
-  padding: 2.8rem 0;
-
-  border-top: 1px solid var(--color-gray);
-
-  font-size: 1.6rem;
   line-height: 1.4;
-
-  color: var(--color-text-dark);
-  text-align: center;
 }
 
-.account_id {
-  display: block;
-  margin-top: 2.8rem;
+.sidebar-profile__membership {
+  margin-top: 0.8rem;
 
   font-size: 1.3rem;
   font-weight: 400;
 
+  line-height: 1;
   color: var(--color-text-dark);
-  line-height: 1.4;
+  opacity: 0.6;
+}
+
+.sidebar-menu__links {
+  margin-top: 4rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+}
+
+.sidebar-menu_link--logout {
+  margin-top: 3rem;
+}
+
+.sidebar-menu_link--logout .sidebar-menu__anchor {
+  color: var(--color-red);
+  font-size: 1.8rem;
+}
+
+.sidebar-menu_link--logout .sidebar-menu__anchor:hover {
+  background-color: var(--color-red-transparent);
+  color: var(--color-text);
+
+  opacity: 1;
+
+  text-decoration: none;
+}
+
+.sidebar-menu__anchor {
+  user-select: none;
+
+  display: flex;
+  align-items: center;
+
+  padding: 1rem 2rem;
+  border-radius: 0.4rem;
+
+  gap: 0.5rem;
+
+  font-size: 1.5rem;
+  font-weight: 400;
+
+  color: var(--color-text);
+
+  opacity: 0.7;
+
+  transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.sidebar-menu__anchor:hover {
+  text-decoration: underline;
+}
+
+.content {
+  flex: 1;
 
   text-align: center;
 
-  opacity: 0.4;
+  color: var(--color-text);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-id {
+  font-size: 1.8rem;
+
+  font-weight: 600;
+  color: var(--color-gray);
 }

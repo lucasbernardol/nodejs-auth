@@ -1,3 +1,5 @@
+import Toast from '/scripts/classes/Toast.js';
+
 const buttonElement = document.querySelector('[data-id="logout"]');
 
 const routes = {
@@ -38,7 +40,10 @@ class Dashboard {
       const request = await axios.delete(logoutRoutePath);
 
       if (this.#isValidCode(request.status)) {
-        this.#redirectTo(routes.home); // Home page
+        Toast.open()
+          .message('Finalizando logout. Aguarde!')
+          .closingDispatch(1, () => this.#redirectTo(routes.signIn))
+          .progress(1);
       }
     } catch (error) {
       console.error(error);

@@ -5,6 +5,8 @@
 
   --color-primary-dark: #713ebd;
   --color-primary: #6d67e4;
+  --color-red: hsl(0, 84%, 58%);
+  --color-red-transparent: hsla(0, 84%, 58%, 0.2);
 
   --color-text: #f0f0f5;
   --color-text-dark: #d3d3d4;

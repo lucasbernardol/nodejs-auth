@@ -10,20 +10,21 @@
       href="/styles/components/buttons.css"
       type="text/css"
     />
-    <link
-      rel="stylesheet"
-      href="/styles/components/modal.css"
-      type="text/css"
-    />
 
     <link
       rel="stylesheet"
       href="/styles/components/spinner.css"
       type="text/css"
     />
+
+    <link
+      rel="stylesheet"
+      href="/styles/components/toast.css"
+      type="text/css"
+    />
     <link rel="stylesheet" href="/styles/form.css" type="text/css" />
 
-    <script defer type="text/javascript" src="/scripts/sign-up.js"></script>
+    <script defer type="module" src="/scripts/sign-up.js"></script>
 
     <title>Faça seu cadastro</title>
   </head>
@@ -91,10 +92,6 @@
               />
             </div>
 
-            <a href="/forgot-password" class="form__forgot"
-              >Esqueci minha senha</a
-            >
-
             <button type="submit" class="form__button">
               <span class="form__button-text">Cadastrar</span>
 
@@ -107,8 +104,8 @@
           </fieldset>
         </form>
       </div>
-
-      <%- include('../components/sucess-modal.ejs') %>
     </div>
+
+    <%- include('../components/toast.ejs') %>
   </body>
 </html>

@@ -14,12 +14,13 @@
     <link rel="stylesheet" href="/styles/global.css" type="text/css" />
 
     <link rel="stylesheet" href="/styles/components/spinner.css" />
+    <link rel="stylesheet" href="/styles/components/toast.css" />
 
     <link rel="stylesheet" href="/styles/form.css" type="text/css" />
 
-    <script defer type="text/javascript" src="/scripts/sign-in.js"></script>
+    <script defer type="module" src="/scripts/sign-in.js"></script>
 
-    <title>Sign In</title>
+    <title>Entrar na plataforma</title>
   </head>
   <body>
     <div class="app" data-id="app">
@@ -77,11 +78,13 @@
             </button>
 
             <a href="/sign-up" class="form__sign-up"
-              >Não tem uma conta? Cadastre-se</a
+              >Não possui uma conta? Cadastre-se</a
             >
           </fieldset>
         </form>
       </div>
     </div>
+
+    <%- include('../components/toast.ejs') %>
   </body>
 </html>
